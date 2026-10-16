@@ -141,6 +141,27 @@ python compare_events2.py
 - **Model seçimi:** 3 model gerçek tweet'lerde karşılaştırıldı, ölçüm hatası elendi ✓
 - **Surrogate testleri:** bilinen süreçlerde doğrulandı ✓
 
+### Ölçek aralığı belirleme (kritik)
+Gerçek duygu serisinde $s<24$ dk'da **çapraz-geçiş** vardır (kutu-içi örnekleme
+gürültüsü): $s_{min}=16$ ile güç-yasası fiti $R^2=0.63$ (kötü), $s_{min}\ge 24$ ile
+$R^2\approx 0.94$ (iyi). Temiz bir p-model referansında $R^2=0.99$ ve
+$\Delta\alpha$ $s_{min}$'den bağımsızdır ($\approx 1.19$). Bu nedenle protokol
+**$s_{min}=32$**, $s_{max}=N/4$, $q\in[-5,5]$, 30 ölçek olarak sabitlendi.
+
+### Trend robustluğu
+Büyük ölçeklerdeki global trendin $\Delta\alpha$'yı şişirip şişirmediği test edildi:
+lineer/kuadratik/kübik detrend sonrası sonuç **korunur** (bkz. `robust_check.py`,
+`scale_test.py`). Ayrıca 1. fark ve günlük-ortalama-çıkarma varyantları incelendi.
+
+### Kalibrasyon cetveli ($\Delta\alpha$, $q\in[-5,5]$, $s_{min}=32$)
+| Süreç | $\Delta\alpha$ |
+|-------|----------------|
+| Beyaz gürültü / tekdüze | 0.02–0.08 |
+| AR(1) φ=0.9 | 0.14–0.30 |
+| fBm (H=0.3–0.9) | 0.21–0.43 |
+| p-model p=0.3 (teorik 1.19) | 1.16–1.20 |
+| **Duygu serisi (distress)** | **≈0.7–0.9** |
+
 ---
 
 ## 📜 Lisans / Atıf

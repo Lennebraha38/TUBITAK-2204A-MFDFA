@@ -1,0 +1,11 @@
+HAM BAYTLAR (ilk 200):
+b'Datetime,Text,coordinates,retweetCount,likeCount,rescue\r\n2020-10-30 00:07:06+03:00,"Bir Pa\xc3\xa7avra,\xc5\x9earli Ebdo\n3\n""Yakla\xc5\x9f\xc4\xb1k 300 ki\xc5\x9finin hayat\xc4\xb1n\xc4\xb1 kaybetti\xc4\x9fi depremi ""\xc4\xb0talyan usul\xc3\xbc deprem"" ba\xc5\x9fl'
+
+[utf-8     ] OK: 'Datetime,Text,coordinates,retweetCount,likeCount,rescue\r\n2020-10-30 00:07:06+03:00,"Bir Pa'
+[cp1254    ] HATA: UnicodeDecodeError: 'charmap' codec can't decode byte 0x9e in position 98: character maps to <undefi
+[latin-1   ] OK: 'Datetime,Text,coordinates,retweetCount,likeCount,rescue\r\n2020-10-30 00:07:06+03:00,"Bir Pa'
+[utf-8-sig ] OK: 'Datetime,Text,coordinates,retweetCount,likeCount,rescue\r\n2020-10-30 00:07:06+03:00,"Bir Pa'
+
+pandas[utf-8]: 'Bir Paçavra,Şarli Ebdo\n3\n"Yaklaşık 300 kişinin hayatını kaybettiği depremi "İtal'
+
+pandas[cp1254] HATA: 'charmap' codec can't decode byte 0x9e in position 98: character maps to <undefined>

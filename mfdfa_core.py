@@ -41,10 +41,15 @@ def theoretical_alpha(q, p):
 # 2. MF-DFA
 # ============================================================
 
-def mfdfa(x, q_vals, order=2, n_scales=30, s_min=16, s_max_frac=4):
+def mfdfa(x, q_vals, order=2, n_scales=30, s_min=32, s_max_frac=4):
     """
     Coklu Fraktal DFA.
     Donus: dict(h_q, tau_q, alpha, f_alpha, scales, Fq)
+
+    Not: s_min=32. Gercek duygu serisinde s < 24'te capraz-gecis (kutu-ici
+    ornekleme gurultusu) oldugu icin (R^2 0.63 -> 0.94) kucuk olcekler
+    dislanir. p-model gibi temiz multifraktallarda Delta_alpha s_min'den
+    bagimsizdir (~1.19).
     """
     x = np.asarray(x, dtype=float)
     N = len(x)
