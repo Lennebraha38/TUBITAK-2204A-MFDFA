@@ -1,0 +1,69 @@
+MODEL KARSILASTIRMA RAPORU
+==============================================================================
+==============================================================================
+MODEL: savasy/bert-base-turkish-sentiment-cased
+==============================================================================
+Etiketler: {0: 'negative', 1: 'positive'}
+  beklenen=P | P=[0.06 0.94] | Bugun hava cok guzel, cok mutluyum ve huzurluyum
+  beklenen=P | P=[0.01 0.99] | Harika bir haber aldik, cok sevindim
+  beklenen=P | P=[0.39 0.61] | Yardimlar bolgeye ulasti, emegi gecen herkese tese
+  beklenen=P | P=[0.23 0.77] | Enkazdan bir kisi sag olarak kurtarildi, cok mutlu
+  beklenen=N | P=[0.99 0.01] | Deprem cok korkunc, herkes perisan ve uzgun
+  beklenen=N | P=[0.99 0.01] | Bu nasil bir felaket, yuregimiz yaniyor
+  beklenen=N | P=[1.00 0.00] | Cok uzgunum, hicbir sey iyiye gitmiyor
+  beklenen=N | P=[1.00 0.00] | Berbat bir gun gecirdim, sinirlerim cok bozuk
+  beklenen=0 | P=[0.83 0.17] | Deprem saat 04.17'de meydana geldi
+  beklenen=0 | P=[1.00 0.00] | Bolgede 10 il etkilendi ve hasar buyuk
+  beklenen=0 | P=[0.04 0.96] | AFAD konuyla ilgili aciklama yapti
+  beklenen=0 | P=[0.26 0.74] | Yarin toplanti saat 10'da yapilacak
+
+==============================================================================
+MODEL: anilguven/bert_tr_turkish_tweet
+==============================================================================
+Etiketler: {0: 'LABEL_0', 1: 'LABEL_1', 2: 'LABEL_2', 3: 'LABEL_3', 4: 'LABEL_4'}
+  beklenen=P | P=[0.00 0.00 1.00 0.00 0.00] | Bugun hava cok guzel, cok mutluyum ve huzurluyum
+  beklenen=P | P=[0.00 0.00 1.00 0.00 0.00] | Harika bir haber aldik, cok sevindim
+  beklenen=P | P=[0.00 0.00 1.00 0.00 0.00] | Yardimlar bolgeye ulasti, emegi gecen herkese tese
+  beklenen=P | P=[0.00 0.00 1.00 0.00 0.00] | Enkazdan bir kisi sag olarak kurtarildi, cok mutlu
+  beklenen=N | P=[0.00 1.00 0.00 0.00 0.00] | Deprem cok korkunc, herkes perisan ve uzgun
+  beklenen=N | P=[0.00 1.00 0.00 0.00 0.00] | Bu nasil bir felaket, yuregimiz yaniyor
+  beklenen=N | P=[0.00 0.00 0.00 1.00 0.00] | Cok uzgunum, hicbir sey iyiye gitmiyor
+  beklenen=N | P=[1.00 0.00 0.00 0.00 0.00] | Berbat bir gun gecirdim, sinirlerim cok bozuk
+  beklenen=0 | P=[0.00 1.00 0.00 0.00 0.00] | Deprem saat 04.17'de meydana geldi
+  beklenen=0 | P=[0.00 1.00 0.00 0.00 0.00] | Bolgede 10 il etkilendi ve hasar buyuk
+  beklenen=0 | P=[0.01 0.96 0.00 0.00 0.02] | AFAD konuyla ilgili aciklama yapti
+  beklenen=0 | P=[0.02 0.01 0.73 0.02 0.23] | Yarin toplanti saat 10'da yapilacak
+
+==============================================================================
+MODEL: saribasmetehan/bert-base-turkish-sentiment-analysis
+==============================================================================
+Etiketler: {0: 'LABEL_0', 1: 'LABEL_1', 2: 'LABEL_2'}
+  beklenen=P | P=[0.00 0.99 0.00] | Bugun hava cok guzel, cok mutluyum ve huzurluyum
+  beklenen=P | P=[0.00 0.99 0.01] | Harika bir haber aldik, cok sevindim
+  beklenen=P | P=[0.00 0.98 0.02] | Yardimlar bolgeye ulasti, emegi gecen herkese tese
+  beklenen=P | P=[0.00 0.99 0.01] | Enkazdan bir kisi sag olarak kurtarildi, cok mutlu
+  beklenen=N | P=[0.00 0.06 0.94] | Deprem cok korkunc, herkes perisan ve uzgun
+  beklenen=N | P=[0.00 0.02 0.98] | Bu nasil bir felaket, yuregimiz yaniyor
+  beklenen=N | P=[0.00 0.01 0.99] | Cok uzgunum, hicbir sey iyiye gitmiyor
+  beklenen=N | P=[0.00 0.00 1.00] | Berbat bir gun gecirdim, sinirlerim cok bozuk
+  beklenen=0 | P=[0.98 0.01 0.00] | Deprem saat 04.17'de meydana geldi
+  beklenen=0 | P=[0.03 0.50 0.46] | Bolgede 10 il etkilendi ve hasar buyuk
+  beklenen=0 | P=[0.73 0.21 0.06] | AFAD konuyla ilgili aciklama yapti
+  beklenen=0 | P=[0.17 0.74 0.09] | Yarin toplanti saat 10'da yapilacak
+
+==============================================================================
+MODEL: furkankarakuz/turkish-emotion-classifier
+==============================================================================
+Etiketler: {0: 'anger', 1: 'disgust', 2: 'fear', 3: 'joy', 4: 'sadness', 5: 'surprise'}
+  beklenen=P | P=[0.00 0.00 0.00 1.00 0.00 0.00] | Bugun hava cok guzel, cok mutluyum ve huzurluyum
+  beklenen=P | P=[0.00 0.00 0.00 1.00 0.00 0.00] | Harika bir haber aldik, cok sevindim
+  beklenen=P | P=[0.00 0.00 0.00 1.00 0.00 0.00] | Yardimlar bolgeye ulasti, emegi gecen herkese tese
+  beklenen=P | P=[0.00 0.00 0.00 1.00 0.00 0.00] | Enkazdan bir kisi sag olarak kurtarildi, cok mutlu
+  beklenen=N | P=[0.00 0.00 1.00 0.00 0.00 0.00] | Deprem cok korkunc, herkes perisan ve uzgun
+  beklenen=N | P=[0.00 0.00 1.00 0.00 0.00 0.00] | Bu nasil bir felaket, yuregimiz yaniyor
+  beklenen=N | P=[0.00 0.00 0.00 0.00 1.00 0.00] | Cok uzgunum, hicbir sey iyiye gitmiyor
+  beklenen=N | P=[1.00 0.00 0.00 0.00 0.00 0.00] | Berbat bir gun gecirdim, sinirlerim cok bozuk
+  beklenen=0 | P=[0.00 0.00 1.00 0.00 0.00 0.00] | Deprem saat 04.17'de meydana geldi
+  beklenen=0 | P=[0.00 0.00 0.03 0.00 0.97 0.00] | Bolgede 10 il etkilendi ve hasar buyuk
+  beklenen=0 | P=[0.00 0.00 1.00 0.00 0.00 0.00] | AFAD konuyla ilgili aciklama yapti
+  beklenen=0 | P=[0.24 0.01 0.16 0.53 0.02 0.04] | Yarin toplanti saat 10'da yapilacak

@@ -1,0 +1,31 @@
+# ============================================================
+# Buyuk veri dosyalari — Kaggle'dan yeniden indirilebilir
+# (GitHub 100MB/dosya limitini asar, o yuzden haric tutulur)
+# ============================================================
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model agirliklari / onbellek
+*.bin
+*.safetensors
+*.onnx
+.cache/
+
+# Gecici / editor / OS
+*.tmp
+*.bak
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
