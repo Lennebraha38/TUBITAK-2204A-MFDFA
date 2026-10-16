@@ -1,4 +1,4 @@
-"""
+r"""
 Bir olayin 1-dk duygu serisinde, SECILEN sinyal kolonu icin MF-DFA + surrogate.
 
 Kullanim:
@@ -32,6 +32,13 @@ n_surr = int(sys.argv[6]) if len(sys.argv) > 6 else 100
 s = pd.read_csv(series_csv, index_col=0, parse_dates=True)
 if signal not in s.columns:
     raise SystemExit(f"KOLON YOK: {signal}. Mevcut: {list(s.columns)}")
+
+# Analiz penceresi baslangici: cok seyrek olay-oncesi donemi disla.
+# (izmir'de olay-oncesi gece ~%66 bos kutu -> lineer interpolasyon artefakti,
+#  ham Delta_alpha=3.55 -> duzeltilmis ~0.67). Kural: tum_start =
+#  max(seri_basi, akut_basi - 1 saat). km2023'te etkisiz (gece seyrek degil).
+tum_start = max(s.index.min(), acute_start - pd.Timedelta(hours=1))
+s = s.loc[s.index >= tum_start]
 
 x_all = s[signal].values.astype(float)
 print(f"{prefix} | sinyal={signal} | N={len(x_all)} | "

@@ -153,6 +153,20 @@ Büyük ölçeklerdeki global trendin $\Delta\alpha$'yı şişirip şişirmediğ
 lineer/kuadratik/kübik detrend sonrası sonuç **korunur** (bkz. `robust_check.py`,
 `scale_test.py`). Ayrıca 1. fark ve günlük-ortalama-çıkarma varyantları incelendi.
 
+### Analiz penceresi kuralı (kritik)
+Her olay için analiz penceresi $[\,t_{\text{olay}}-1\text{s},\ t_{\text{son}}\,]$
+olarak tanımlandı. Gerekçe: İzmir verisinde olay-öncesi **gece**
+(2020-10-29 21:07 → 2020-10-30 10:00) aşırı seyrektir (884 dakikanın 586'sı boş
+kutu, %66) ve lineer interpolasyon büyük ölçeklerde **yapay** yapı üretir: ham
+$\Delta\alpha=3.55 \to$ düzeltilmiş $\approx 0.67$ (`izmir_windows.py`,
+`check_izmir_onset.py`). km2023'te kural etkisizdir (gece yeterince yoğun).
+Pencereler: **TÜM**, **AKUT** ($t_{\text{olay}}+24$s), **NORM** (son 48s),
+**HACİM** ($\log(1+\text{tweet/dk})$, doğrusal kontrol).
+
+### Sirkadiyen (24s) kontrolü
+`diurnal_check.py` ile saatlik ortalama çıkarıldı; km2023'te $\Delta\alpha$
+değişmez ($0.78\to0.86$), yani sonuç sirkadiyen döngü artefaktı değildir.
+
 ### Kalibrasyon cetveli ($\Delta\alpha$, $q\in[-5,5]$, $s_{min}=32$)
 | Süreç | $\Delta\alpha$ |
 |-------|----------------|
