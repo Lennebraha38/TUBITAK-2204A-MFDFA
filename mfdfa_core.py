@@ -73,7 +73,9 @@ def mfdfa(x, q_vals, order=2, n_scales=30, s_min=16, s_max_frac=4):
             continue
         for i, q in enumerate(q_vals):
             if abs(q) < 1e-10:
-                Fq[i, j] = np.exp(np.mean(np.log(F2)))
+                # Standart MF-DFA: F_0(s) = exp( 1/2 * mean( ln F^2 ) )
+                # (F(s,v)=sqrt(F2) oldugundan ln F = 1/2 ln F2)
+                Fq[i, j] = np.exp(0.5 * np.mean(np.log(F2)))
             else:
                 Fq[i, j] = np.mean(F2 ** (q / 2.0)) ** (1.0 / q)
 

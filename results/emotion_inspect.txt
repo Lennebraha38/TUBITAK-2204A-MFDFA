@@ -1,0 +1,71 @@
+==============================================================================
+EN YUKSEK: anger  (ort=0.140, argmax%=13.9)
+==============================================================================
+[1.000] Arkadasımız zekiye öfkeli ve ailesi enkaz altında, bloktaki kimseden haber alamıyoruz  Hatay ANTAKYA Armutlu mahall
+[1.000] ya şu ülkede paypal olsa şu anda tüm dünyadan bağış toplayabilirdik okadar sinirleniyorum ki şu paypal olayına 
+[1.000] Yağmacıları mehmetçik vurmazsa halk mı vursun⁉️
+[1.000] O megafona sizi dik oturturlar umarım kansız herifler. Bu alçaklığı, nasıl açıklayacaksınız merhametsiz, domuzlar. 
+[1.000] DEVLETİMİZ AYAKTADIR. Provokatif paylaşımlara itibar etmeyip , Mümkün mertebe telefonları da meşgul etmeyelim.RABBİ
+[1.000] Yağmacılara dikkat edin Bina bina dolaşıyorlardır 
+[1.000] Ne utanmaz ne arsız insanlarsınız burada da mı siyaset. Yazıklar olsun size  
+[1.000] Böyle bir günde siyaset yapan, ırkçılık yapan, insan ayrıştıranlar. Siz gerçekten rezilsiniz. Diğer ülkeler bile bi
+
+==============================================================================
+EN YUKSEK: disgust  (ort=0.007, argmax%=0.4)
+==============================================================================
+[1.000] Şu durumdan bile menfaatini düşünecek kadar aşşağlık insanlar ile aynı havayı soluyup aynı dünyada yaşamaktan tiksi
+[0.999] Arkadaşımın tandığı insanlardan bazılar göçük altında yayılması için elimizden geleni yapalım    
+[0.998]  çölyak hastaları için 
+[0.990]  ayşe Fitnat hanım cad. Parlar apt. 2. kat, vali göbeği,Antakya Göçük altında kaldığı kesin olan insanlar : Özlem Ş
+[0.982] Yutkunamazsın, kelimeler boğazında düğümlenir ya.. 😔 
+[0.939] Lütfen enkaz bölgelerinde sigara içmeyin! Doğalgaz kaçaklarından dolayı yangın çıkabilir, daha büyük sorunlar olabi
+[0.932]  öldürmez, insan öldürür!
+[0.882]  ADIYAMAN - MALATYA İSTİKAMETİNE ERKENEK TÜNELİ BETON DÖKÜNTÜLERİNDEN DOLAYI TRAFİK DİĞER YAN TÜNELDEN GELİŞ-GİDİŞ 
+
+==============================================================================
+EN YUKSEK: fear  (ort=0.212, argmax%=21.1)
+==============================================================================
+[1.000] Hala titriyorum korkuyorum 
+[1.000] Ülkem korku içinde çoğu il yerle bir oldu Allah’ım yardım et ben böyle bir felaket görmedim.
+[1.000] Az önce deprem oldu kendimizi dışarı attık çok korkunçtu elim ayağım titriyor 
+[1.000]  sivas merkez çok sallandık uzun süren bir depremdi Allah im sen koru yarabbim çok korkunçtu 😭😭😭😭😭
+[1.000] Rabbim yardımcınız olsun 99 depremini yaşamış biri olarak nasıl bir korku nasıl bir çaresizlik biliyorum.   
+[1.000] Allahım sen koru🤲 çok korktuk çokkk😥🤲
+[1.000] Gaziantep'te olan akrabalarımız ile konuştuk halam saniye değildi saatler sürdü sanki dedi sesindeki korku ve çares
+[1.000] Merkez üst  7.4 😥Allahım can kaybı yoktur inşAllah 🤲😥Rize de ilk defaböyle güçlü  hissettim yaşadım😥Ve çok korktum 
+
+==============================================================================
+EN YUKSEK: joy  (ort=0.136, argmax%=13.8)
+==============================================================================
+[1.000] Aldığım en güzel haber  
+[1.000] GÜZEL HABERLER ALDIKÇA MUTLU OLUYORUM 💗💗 
+[1.000] Giresun 19 Eylül Kapalı Spor Salonunda afet bölgesi için toplanan yardımlar koli koli tasnif ediliyor, öğrenci arka
+[1.000] Bursa'da Mudanya tarafında olanlar yardım etmek isterse bu numarayı arayabilir mi? En ufak şey bile oradaki insanla
+[1.000] Birlik olursak daha güzel oluyoruz kötüler belasını bulsun 
+[1.000]      paylaşır mısınız
+[1.000] Böylece futbol anlam kazansınFenerbahçeGalatasarayBeşiktaşTrabzonspor
+[1.000] Yayabildiğimiz kadar yayalım bir çok insana ulaşsın inşallah 🙏 
+
+==============================================================================
+EN YUKSEK: sadness  (ort=0.424, argmax%=42.4)
+==============================================================================
+[1.000] allahım bu nasıl bir gece.. çok üzgünüm çok.. 
+[1.000] Çok üzgünüz Çok Kötüyüz Videoları izledikçe Etkileniyoruz 🙏 Allah şifa versin yardım etsin herkese 🤲               
+[1.000] Yıkıldık resmen Allah yardım estin çok üzgünüm.  
+[1.000] çok üzülüyorum bakamıyorum bile videolara 
+[1.000] 06.02.2023GEÇMİŞ OLSUN TÜRKİYEÇok üzgünüm, çok...
+[1.000]    Çoğu il sallanmış, kötü haberler geliyor. Dış destekli olduğu konuşuluyor. Lütfen olmasın Türkiyem, çok çok üzgü
+[1.000] Çok üzgünüm Allahım beterini yaşatmasın..
+[1.000] Tüm Ülkemize geçmiş olsun. Yolları açık tutalım,yetkili kurumların çağrılarına uyalım,çok üzgünüm çok 
+
+==============================================================================
+EN YUKSEK: surprise  (ort=0.083, argmax%=8.4)
+==============================================================================
+[1.000]  Çok fazla bilgi kirliliği mevcut neye inanacağını şaşarsın.
+[1.000] Ben halâ inanamıyorum 🥺 O anları aklımdan çıkaramıyorum Allah'ım beterinden koru🥺🤲🏻 
+[1.000] İşte bunlar hep tesadüf dimi kendine siyasetçi, gazeteci, yazar diyen yavşaklarAmerikan ordusu uçak gemisiyle ve  s
+[1.000] Kutsal kitabı yakan Danimarka'lı, yakan yer İsveç,  lerin olduğu yer Türkiye. Hesap mı şaştı, koordinat mı karıştı.
+[1.000] Güneş sistemi ile ilgili araştırma yapan Hollandalı bilim adamı 2 gün önce noktasına kadar söylemiş çok enteresan b
+[1.000] Naci Görür yırttık kendimizi dinletemedik umursamadılar diyor.Umursamadık; hicbirimiz. Olan olduktan sonra başa gel
+[1.000] Tek derdi sokaktaki köpek olanlar, benligi kibri olanlar işte Allah öyle dertler verir ki insan şaşar kalır. Insan 
+[1.000] yataktan nasıl kalktıgımı anlamadım   

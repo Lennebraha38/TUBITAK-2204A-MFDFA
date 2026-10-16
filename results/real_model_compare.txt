@@ -1,0 +1,44 @@
+==============================================================================
+MODEL: savasy/bert-base-turkish-sentiment-cased
+Etiketler: {0: 'negative', 1: 'positive'}
+  negative    : ort=0.680  argmax= 69.6%
+  positive    : ort=0.320  argmax= 30.4%
+
+==============================================================================
+MODEL: saribasmetehan/bert-base-turkish-sentiment-analysis
+Etiketler: {0: 'LABEL_0', 1: 'LABEL_1', 2: 'LABEL_2'}
+  LABEL_0     : ort=0.097  argmax=  9.6%
+  LABEL_1     : ort=0.633  argmax= 65.2%
+  LABEL_2     : ort=0.270  argmax= 25.2%
+
+==============================================================================
+MODEL: furkankarakuz/turkish-emotion-classifier
+Etiketler: {0: 'anger', 1: 'disgust', 2: 'fear', 3: 'joy', 4: 'sadness', 5: 'surprise'}
+  anger       : ort=0.139  argmax= 13.5%
+  disgust     : ort=0.009  argmax=  0.7%
+  fear        : ort=0.195  argmax= 19.2%
+  joy         : ort=0.147  argmax= 14.9%
+  sadness     : ort=0.430  argmax= 43.5%
+  surprise    : ort=0.080  argmax=  8.1%
+
+##############################################################################
+ORNEK INCELEME (savasy binary)
+##############################################################################
+-- en NEGATIF 8 --
+[-1.00]   Maraş , Antep , Diyarbakır ve diğer yakın illerde olan tüm dostlar , geçmiş oldun :(
+[-1.00]  Malatyadan bir mahallemiz :( 
+[-1.00] Geçmiş olsun Türkiye.Vefat eden vatandaşlarımıza Allah'tan rahmet, yakınlarına başsağlığı, yaralı olanlara da 
+[-1.00] HATAY KIRIKHAN VE ONLARCASI OTURDUK BEKLİYORUZ :( 
+[-1.00] 7,7’lik Kahramanmaraş depremimizde,1700’den fazla can kaybımız var. Allah yardımcımız olsun:’(    
+[-1.00]  :( yıkıldık, kahrolduk 
+[-1.00] Adiyaman cok kotu durumdaymis :( yardim istiyolar  
+[-1.00] Allah’ım yardım et:(Bu karda kışta, bu soğukta...Nasıl olacak:(nasıl dayanacaklar sağ kalanlar.     
+-- en POZITIF 8 --
+[+0.99] Yaşamak ve yaşatmak..Kelimelerin yetmediği zamanlar. 
+[+1.00] Lütfen bu linki tüm gruplarınıza ulaştırın Bu bir harita ve dışarda kalanlar için kapısını açmış olan yerlerin
+[+1.00] Türkiye genelinde 6 Şubat'tan 12 Şubat'a kadar milli yas ilan edildi 👇🏻     
+[+1.00]  çok geçmiş olsunnn 🙏🏻
+[+1.00] Aynı şekilde Kadıköy Belediyesi de aktif olarak çalışıyor   🙏🏻
+[+1.00] Önemli bilgilendirme👇🏻  
+[+1.00] yarin herkesi kan bagisina bekliyoruz🙏🏻    
+[+1.00]  Olum bunları hemen bulun hemen   

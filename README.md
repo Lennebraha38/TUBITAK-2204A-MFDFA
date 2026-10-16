@@ -39,11 +39,25 @@ uzun-erimli bağımlı) mı? Bu proje:
 
 ## 🧮 Yöntem
 
-### 1. Duygu ölçümü
-- Model: `saribasmetehan/bert-base-turkish-sentiment-analysis` (BERTurk, 3 sınıf, %96.2)
-- Etiketler: `LABEL_0 = nötr`, `LABEL_1 = pozitif`, `LABEL_2 = negatif`
-- Sürekli skor: $S_t = P(\text{poz}) - P(\text{neg}) \in [-1, +1]$
+### 1. Duygu ölçümü — **model doğrulaması kritik**
+Sosyal medya duygu ölçümünde **ölçüm geçerliliği** en kritik adımdır. Genel amaçlı
+duygu modelleri felaket bağlamında sistematik hata yapabilir. Bu projede üç model
+gerçek deprem tweet'lerinde test edildi:
+
+| Model | Gerçek veride davranış | Karar |
+|-------|------------------------|-------|
+| `saribasmetehan/...sentiment-analysis` (3 sınıf) | "Acil yardım edin", "geçmiş olsun" → **POZİTİF** ❌ | elendi |
+| `savasy/...sentiment-cased` (2 sınıf) | %70 negatif, makul ama kusurlu | **robustluk kontrolü** |
+| `furkankarakuz/turkish-emotion-classifier` (6 duygu) | korku/üzüntü/öfke/sevinç örnekleri **tutarli** ✅ | **ANA ölçüm** |
+
+- **ANA sinyaller (6 duygu):** anger, disgust, fear, joy, sadness, surprise
+- **Bileşik:** `distress = sadness + fear`, `neg_emo = sad+fear+anger+disgust`,
+  `valence_emo = joy − neg_emo`
+- **Robustluk:** `val_sav = P(poz) − P(neg)` (savasy, bağımsız model)
 - 1 dakikalık kutularda ortalama → $N \approx 7200$
+
+> Bu doğrulama, "naif model seçimi yanlış bilimsel sonuç üretir" dersini somutlar;
+> projenin metodolojik katkılarından biridir.
 
 ### 2. Çoklu Fraktal DFA (Kantelhardt, 2002)
 - Profil: $Y(i) = \sum_{k=1}^{i}(x_k - \bar{x})$
@@ -66,14 +80,19 @@ uzun-erimli bağımlı) mı? Bu proje:
 ## 📁 Proje Yapısı
 
 ```
-mfdfa_core.py         MF-DFA motoru + surrogate üreticileri
-pmodel_test_v2.py     P-model (binomial cascade) doğrulaması  [Δα hata %4.4]
-score_all.py          Kahramanmaraş 2023 tweet skorlama (fp16, GPU)
-score_izmir.py        İzmir 2020 tweet skorlama
-score_emotions.py     6 boyutlu duygu skorlama
-build_series.py       1-dk / 5-dk zaman serisi üretimi
-analyze_series.py     MF-DFA + surrogate testleri (tek olay)
-compare_events.py     İki olay karşılaştırması
+mfdfa_core.py         MF-DFA motoru + surrogate üreticileri (IAAFT/shuffle/faz)
+pmodel_test_v2.py     P-model (binomial cascade) doğrulaması
+calibration.py        MF-DFA kalibrasyon cetveli (bilinen süreçler)
+verify_fix.py         h(q) ve Δα doğrulaması (fGn, p-model)
+score2.py             ANA skorlama: duygu modeli (6 boyut) + savasy [both events]
+compare_on_real.py    Model karşılaştırması (gerçek tweet'lerde)
+emotion_inspect.py    Duygu modeli örnek doğrulaması
+score_all.py          (eski) tek-model skorlama — arşiv
+score_izmir.py        (eski) İzmir skorlama — arşiv
+build_series2.py      1-dk/5-dk zaman serisi üretimi (tüm sinyaller)
+analyze2.py           MF-DFA + surrogate testleri (seçilen sinyal)
+run_analysis.py       Tüm analiz sürücüsü (iki olay × yedi sinyal)
+compare_events2.py    Karşılaştırma tablosu + figür
 compare_models.py     Duygu modeli karşılaştırması
 analyze_phases.py     Deprem verisi faz (hacim) analizi
 izmir_analyze.py      İzmir verisi yapı analizi
@@ -91,29 +110,35 @@ pip install transformers accelerate numpy scipy pandas matplotlib seaborn numba
 
 # 2. Veriyi indir (Kaggle) -> data/earthquake/, data/izmir/
 
-# 3. Tweet'leri skorla
-python score_all.py            # Kahramanmaraş 2023
-python score_izmir.py          # İzmir 2020
+# 3. Tweet'leri skorla (duygu modeli + savasy, iki olay)
+python score2.py km2023
+python score2.py izmir2020
 
-# 4. Zaman serisi üret
-python build_series.py "results\scored\deprem*_scored.csv.gz" Date km2023
-python build_series.py "results\scored\izmir_scored.csv.gz" Datetime izmir2020
+# 4. Kalibrasyon + doğrulama (opsiyonel)
+python calibration.py
+python verify_fix.py
 
-# 5. MF-DFA + surrogate
-python analyze_series.py results\km2023_series_1min.csv km2023 2023-02-06T00:00
-python analyze_series.py results\izmir2020_series_1min.csv izmir2020 2020-10-30T11:51
+# 5. Tüm analiz: seri üretimi + her sinyalde MF-DFA + surrogate
+python run_analysis.py 100
 
 # 6. İki olayı karşılaştır
-python compare_events.py
+python compare_events2.py
 ```
 
 ---
 
 ## ✅ Doğrulama
 
-- **P-model (binomial cascade):** teorik $\Delta\alpha = 1.2224$ (p=0.3),
-  hesaplanan $1.1689$ → **bağıl hata %4.37** ✓
-- **Duygu modeli etiket eşlemesi:** model kartı + 12 cümlelik probe ile teyit ✓
+- **Hurst üssü:** spektral sentezle üretilen fGn serilerinde $h(q{=}2)$,
+  $H=0.3/0.5/0.7/0.9$ için $0.323/0.518/0.704/0.893$ → teorik değerlerle **uyumlu** ✓
+- **P-model (binomial cascade):** $\Delta\alpha$ teorik $1.188$ (p=0.3),
+  hesaplanan $1.202$ → **bağıl hata %1.2** ✓ (p=0.2: 1.996 → 2.009)
+- **Kalibrasyon cetveli** (`calibration.py`): beyaz gürültü $0.08$, AR(1) $0.14$–$0.30$,
+  fBm $0.21$–$0.43$ (monofraktal) vs. p-model $1.2$–$2.0$ (multifraktal)
+- **MF-DFA çekirdek düzeltmesi:** $q=0$ dalı $F_0=\exp(\tfrac12\overline{\ln F^2})$
+  olacak şekilde düzeltildi (önce $h(0)$ iki katı çıkıyordu; $\Delta\alpha$ etkilenmemişti)
+- **Duygu modeli etiket eşlemesi:** model kartı + gerçek tweet örnekleriyle teyit ✓
+- **Model seçimi:** 3 model gerçek tweet'lerde karşılaştırıldı, ölçüm hatası elendi ✓
 - **Surrogate testleri:** bilinen süreçlerde doğrulandı ✓
 
 ---
