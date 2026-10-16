@@ -116,6 +116,9 @@ t = t.replace("---", "—").replace("--", "–")
 t = t.replace("~", " ")
 
 # bosluk temizligi
+t = re.sub(r"(\w) '", r"\1'", t)
+t = re.sub(r"\( ", "(", t)
+t = re.sub(r" \)", ")", t)
 t = re.sub(r"[ \t]+", " ", t)
 t = re.sub(r" *\n *", "\n", t)
 t = re.sub(r"\n{3,}", "\n\n", t)

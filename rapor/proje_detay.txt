@@ -375,7 +375,7 @@ Farklı s değerleri için F(s)'i hesaplayıp log F(s)'i log s'ye karşı
 çizeriz. Eğer bir doğru elde edersek, eğimi bize Hurst üssü H'yi verir
 (Bkz. Denklem eq:powerlaw). Doğrusallık (yüksek R^2), ölçekleme
 yasasının geçerli olduğunun kanıtıdır; bu projede bu ölçütü titizlikle
-kullandık (bkz. Bölüm ).
+kullandık (bkz. Bölüm).
 
 — Çoklu Fraktal DFA (MF–DFA) —
 
@@ -754,7 +754,7 @@ Tüm analiz, açık kaynak Python ile yazılmıştır. MF–DFA motoru, surrogat
 üreticileri (IAAFT, shuffle, faz) ve kalibrasyon araçları sıfırdan
 kodlanmıştır. Duygu puanlaması PyTorch + Transformers ile GPU üzerinde
 yapılmıştır. Sonuçlar, her adımı yeniden üretilebilir kılacak şekilde
-kaydedilmiştir (bkz. Ek ).
+kaydedilmiştir (bkz. Ek).
 
 ===== Bulgular =====
 
@@ -762,7 +762,7 @@ kaydedilmiştir (bkz. Ek ).
 
 Analize geçmeden önce motorun güvenilirliği kanıtlanmıştır. Bilinen süreçlerde
 Delta_alpha beklendiği gibi çıkmıştır: beyaz gürültüde neredeyse sıfır, tekli
-fraktallarda düşük, p-model'de yüksek (Tablo ). Bu, "eğer
+fraktallarda düşük, p-model'de yüksek (Tablo). Bu, "eğer
 gerçek veride büyük Delta_alpha bulursak, bu motorun ürettiği bir artefakt
 değildir" güvencesini verir.
 
@@ -777,7 +777,7 @@ gözlenen yapı ne trend, ne günlük döngü, ne de ölçüm gürültüsüdür.
 
 — Olay 1: Kahramanmaraş 2023 —
 
-Tam seri ve fazlar için Delta_alpha ve IAAFT z-skorları Tablo 'de
+Tam seri ve fazlar için Delta_alpha ve IAAFT z-skorları Tablo'de
 verilmiştir.
 
 [Kahramanmaraş 2023 duygusal sinyallerinde MF–DFA ve IAAFT testi.]
@@ -820,7 +820,7 @@ zayıflar (distress 0.78 -> 0.38; sevinç 0.87 -> 0.11). Yani
 kolektif duygu, kriz geçtikçe daha "rastgele" bir hâle yaklaşır.
 
 - Kontrol: Tweet hacminin Delta_alpha'sı büyük görünse de
-( = 1.0) IAAFT null'undan anlamlı sapmaz (z=+0.3). Bu,
+(= 1.0) IAAFT null'undan anlamlı sapmaz (z=+0.3). Bu,
 hacmin karmaşıklığının doğrusal süreçlerle açıklanabildiğini,
 oysa duygunun karmaşıklığının açıklanamadığını gösterir: duygu,
 yalnızca "aktivite" değildir.
