@@ -178,6 +178,18 @@ değişmez ($0.78\to0.86$), yani sonuç sirkadiyen döngü artefaktı değildir.
 
 ---
 
+## 📄 Rapor
+
+Proje detay dosyası (XeLaTeX, konuyu hiç bilmeyen biri için sıfırdan öğretici
+anlatım; giriş → kuramsal arka plan → yöntem → bulgular → tartışma →
+sonuç + ekler):
+
+```
+rapor/proje_detay.tex
+```
+
+---
+
 ## 📜 Lisans / Atıf
 
 TÜBİTAK 2204-A proje çalışması. Yöntem: Kantelhardt vd. (2002),

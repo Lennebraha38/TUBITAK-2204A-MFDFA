@@ -1,0 +1,1093 @@
+% !TEX program = xelatex
+% =====================================================================
+%  TUBITAK 2204-A  --  Proje Detay Raporu
+%  Sosyal Medya Duygu Zaman Serilerinin Çoklu Fraktal Analizi
+%  Derleyici: XeLaTeX
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\usepackage{polyglossia}
+\setmainlanguage{turkish}
+\setotherlanguage{english}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{margin=2.4cm}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\usepackage{xcolor}
+
+\newcommand{\Dal}{\Delta\alpha}
+
+\title{\bfseries Sosyal Medya Duygu Zaman Serilerinin Çoklu Fraktal Analizi ile\\
+Kaotik ve Stokastik Dinamiklerin Ayrıştırılması}
+\author{TÜBİTAK 2204-A Proje Detay Raporu\\[3pt]
+\small Matematik Alanı --- Algoritma Tasarımı ve Uygulamaları}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\begin{minipage}{0.92\textwidth}
+\small\itshape
+Bu rapor, konuya tamamen yabancı bir okuyucunun (jüri üyesi, öğretmen, öğrenci)
+her adımı takip edebilmesi için yazılmıştır. Bu nedenle teknik kavramlar önce
+gündelik benzetmelerle sezdirilir, sonra matematiksel olarak tanımlanır.
+Rapor tek bir soruya odaklanır: \textbf{Bir deprem sırasında milyonlarca
+insanın sosyal medyada birlikte ürettiği duygu zaman serisi tamamen rastgele
+(stokastik) midir, yoksa kendine özgü, ölçekten bağımsız bir düzeni (çoklu
+fraktal yapı) taşır mı?}
+\end{minipage}
+\end{center}
+
+\vspace{0.5cm}
+
+% =====================================================================
+\section*{Özet}
+\addcontentsline{toc}{section}{Özet}
+% =====================================================================
+
+Bu projede, büyük bir toplumsal sarsıntı (deprem) sırasında sosyal medyada
+oluşan \emph{kolektif duygunun} bir zaman serisi olarak nasıl davrandığı
+incelenmiştir. İki bağımsız deprem olayında (6 Şubat 2023 Kahramanmaraş,
+30 Ekim 2020 İzmir) toplam yaklaşık 1{,}9 milyon Türkçe tweet toplanmış;
+her tweet, altı temel duygu boyutunda (öfke, tiksinme, korku, sevinç, üzüntü,
+şaşkınlık) puanlanmış ve dakika bazında ortalama alınarak sürekli duygu zaman
+serileri üretilmiştir. Bu serilerin istatistiksel doğası \emph{çoklu fraktal
+dalgalanma analizi} (MF--DFA) ile ölçülmüş, gözlemin rastgelelikten gerçekten
+ayrışıp ayrışmadığı \emph{surrogate (vekil veri) testleri} ile sınanmıştır.
+
+Sonuçlar üç başlıkta özetlenebilir. Birincisi, duygu zaman serisi \emph{tamamen
+rastgele değildir}; gözlenen çoklu fraktallik genişliği ($\Dal$), aynı dağılıma
+ve aynı doğrusal korelasyona sahip vekil verilerin ürettiğinden istatistiksel
+olarak anlamlı biçimde büyüktür. Yani duyguda, doğrusal korelasyonla
+açıklanamayan, gerçek bir \emph{doğrusal olmayan} yapı vardır. İkincisi, bu
+yapı \emph{zamanla değişir}: kriz anında (depremden sonraki ilk saatler)
+çoklu fraktallik güçlüdür; günler geçip toplum normale döndükçe zayıflar.
+Üçüncüsü, duygu ile saf \emph{aktivite yoğunluğu} (dakikadaki tweet sayısı)
+birbirinden ayrılır: tweet hacminin görünür karmaşıklığı, büyük ölçüde doğrusal
+bir süreçle açıklanabilirken, duygunun karmaşıklığı açıklanamaz. Projektin bir
+diğer önemli çıktısı metodolojiktir: sosyal medya duygu ölçümünde naif bir
+model seçiminin sistematik ve ciddi hata üretebileceği somut örneklerle
+gösterilmiş ve bu hata ayıklanarak giderilmiştir.
+
+\textbf{Anahtar kelimeler:} çoklu fraktal analiz, MF--DFA, Hurst üssü,
+surrogate testi, IAAFT, duygu zaman serisi, sosyal medya, deprem,
+doğrusal olmayan dinamikler, uzun erimli bellek.
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{Giriş}
+% =====================================================================
+
+\subsection{Bir soruyla başlayalım}
+% ---------------------------------------------------------------------
+
+Bir şehirde büyük bir deprem olduğunu düşünün. Dakikalar içinde milyonlarca
+insan telefonuna sarılır, sosyal medyada yazar, paylaşır, ağlar, yardım ister,
+yardım eder. Bu insanlar birbirini tanımaz, birbirleriyle konuşmaz; ama hep
+birlikte, devasa bir ``duygu dalgası'' üretirler. Peki bu dalga \emph{nasıl bir
+şeydir}?
+
+Bu dalgayı ölçmenin basit bir yolu vardır. Zamanı birer dakikalık aralıklara
+böleriz. Her dakikada, o dakika içinde atılan tüm tweet'leri alıp ``bu tweet'ler
+ne kadar üzüntü içeriyor?'' sorusunu sorar ve tek bir sayı elde ederiz. Böylece
+elimizde bir sayı dizisi olur:
+
+\begin{center}
+$0.42,\ 0.44,\ 0.41,\ 0.55,\ 0.61,\ 0.58,\ 0.43,\ \dots$
+\end{center}
+
+İşte bu dizinin adı \textbf{zaman serisidir}: ardışık zamanlarda ölçülmüş
+değerlerin sıralı listesi. Şimdi asıl soru şudur:
+
+\begin{quote}
+\emph{Bu sayılar arasında bir düzen var mıdır, yoksa sadece rastgele mi
+sıralanmışlardır?}
+\end{quote}
+
+Eğer sayılar gerçekten rastgeleyse (her dakika bir zar atılmış gibi), o zaman
+geçmişe bakarak geleceği tahmin etmek temelde imkânsızdır ve toplumun duygusu
+hakkında ``yapısal'' hiçbir şey söyleyemeyiz. Ama eğer sayılar arasında
+zamana yayılmış, \emph{ölçekten bağımsız} bir düzen varsa, o zaman ortada
+ciddi bir olgu vardır: insanlar farkında olmadan ortak bir karmaşık dinamiğe
+girmektedirler. Bu proje tam olarak bu ikisini \emph{birbirinden ayırmayı}
+amaçlar.
+
+\subsection{Neden ``rastgele mi, fraktal mi?'' sorusu önemlidir}
+% ---------------------------------------------------------------------
+
+Bilimde bir olayı anlamanın ilk adımı, onun \emph{rastgele} mi yoksa
+\emph{belirli bir yapı taşıyor mu} olduğunu bilmektir. Bu ayrım sadece akademik
+bir merak değildir; pratik sonuçları vardır:
+
+\begin{itemize}[leftmargin=1.4em]
+  \item Eğer duygu serisi rastgeleyse, onu modellemek için yalnızca
+        ``ortalama'' ve ``dağılım'' yeterlidir; başka bir yapı aramaya gerek
+        yoktur.
+  \item Eğer seri \emph{uzun erimli bellek} (bugünkü değerin, günler önceki
+        değerden hâlâ etkilenmesi) ve \emph{çoklu fraktallik} (farklı
+        büyüklükteki dalgalanmaların farklı ölçeklerde farklı davranması)
+        taşıyorsa, o zaman:
+        \begin{itemize}
+          \item topyekûn duygunun ``hafızası'' vardır; kriz yönetimi,
+                iletişim ve psikolojik destek planlamasında bu hafıza
+                kullanılabilir;
+          \item kriz ile normal dönem istatistiksel olarak birbirinden
+                ayrılabilir; bu, bir \emph{erken uyarı göstergesi} (early
+                warning indicator) fikrinin temelidir;
+          \item ``insan toplulukları, tıpkı türbülans ya da finansal piyasalar
+                gibi, doğrusal olmayan (nonlinear) dinamikler üretir'' tezi
+                somut veriyle sınanmış olur.
+        \end{itemize}
+\end{itemize}
+
+Kısacası, bu proje bir \emph{ayrıştırma} problemidir: karmaşık görünen bir
+sinyalin içindeki ``rastgele'' ile ``yapılı'' kısmı birbirinden ayırmak.
+
+\subsection{Neden sosyal medya? Neden deprem?}
+% ---------------------------------------------------------------------
+
+\textbf{Neden sosyal medya?} Çünkü insan davranışını, üstelik \emph{zaman
+damgalı} ve \emph{ölçeklenebilir} biçimde gözlemlemenin nadir yollarından
+biridir. Klasik anketler geçmişe dönük ve seyrektir; oysa sosyal medya,
+saniyeler mertebesinde, doğal ortamda ve sürekli veri üretir. Bir şehrin
+``toplu ruh hâli''ni dakika dakika izleyebileceğimiz bir kayıttır.
+
+\textbf{Neden deprem?} Çünkü deprem, tetikleyicisi (yer sarsıntısı) kesin
+olarak bilinen, ani ve çok şiddetli bir toplumsal olaydır. Bu sayede
+``kriz başladı'' anını saniyesi saniyesine bilebiliriz ki bu, bilimsel olarak
+paha biçilmezdir: kriz öncesi, kriz anı ve kriz sonrasını net biçimde
+ayırabiliriz. Ayrıca depremler, birbirinden bağımsız olarak gerçekleştiği için
+elde edilen sonucun \emph{tekrarlanabilirliğini} test etmemize olanak tanır.
+
+\subsection{Literatür ve boşluk}
+% ---------------------------------------------------------------------
+
+Fraktal ve çoklu fraktal analiz, 1990'lardan bu yana pek çok alanda
+kullanılmıştır:
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Fizik:} türbülans, akışkan dinamiği, dalga kırılması.
+  \item \textbf{Finans:} borsa getirileri, döviz kurları, volatilite.
+  \item \textbf{Biyoloji/tıp:} kalp atışı aralıkları (HRV), beyin
+        aktivitesi (EEG), DNA dizileri.
+  \item \textbf{İklim:} sıcaklık, yağış, nehir akışı.
+  \item \textbf{Karmaşık sistemler:} internet trafiği, trafik akışı.
+\end{itemize}
+
+Buna karşılık, \emph{sosyal medya duygu zaman serilerinin} çoklu fraktal
+analizi çok yenidir ve özellikle \emph{afet bağlamında} neredeyse bakir bir
+alandır. Mevcut çalışmaların çoğu ya duygu sınıflandırmasıyla (makine
+öğrenmesi) ya da tek ölçekli istatistiklerle (örneğin basit otokorelasyon)
+sınırlı kalmıştır. Oysa kolektif duygunun doğasını anlamak için
+\emph{ölçekten bağımsız} bir çerçeve gerekir. Bu proje tam olarak bu boşluğu
+hedefler: \emph{iki bağımsız afet olayında, duygu zaman serisini çoklu fraktal
+analizle incelemek ve rastgelelikle sistematik olarak karşılaştırmak.}
+
+\subsection{Amaç, araştırma soruları ve hipotezler}
+% ---------------------------------------------------------------------
+
+\textbf{Genel amaç:} Sosyal medyada bir kriz anında oluşan kolektif duygu
+zaman serisinin istatistiksel doğasını, rastgele (stokastik) bir süreçten
+ayırarak ortaya koymak.
+
+\textbf{Araştırma soruları:}
+\begin{enumerate}[leftmargin=1.6em,label=\textbf{AS\arabic*.}]
+  \item Duygu zaman serisi, beyaz gürültüye (tamamen rastgele) kıyasla
+        anlamlı bir çoklu fraktal genişlik ($\Dal$) sergiliyor mu?
+  \item Bu genişlik, aynı dağılımı ve aynı \emph{doğrusal} korelasyonu koruyan
+        vekil verilere (IAAFT) kıyasla da anlamlı mı? (Yani doğrusal olmayan
+        bir yapı var mı?)
+  \item Çoklu fraktallik \emph{kriz} ve \emph{normalleşme} fazları arasında
+        değişiyor mu?
+  \item Duygunun karmaşıklığı, salt \emph{aktivite yoğunluğundan} (tweet
+        hacmi) ayrılabiliyor mu?
+  \item Bu sonuçlar iki bağımsız deprem olayında tekrarlanıyor mu
+        (genellenebilirlik)?
+\end{enumerate}
+
+\textbf{Hipotezler:}
+\begin{description}[leftmargin=1.6em]
+  \item[H1] Duygu serisi, rastgele vekillere kıyasla anlamlı $\Dal$ gösterir
+        (yani rastgele değildir).
+  \item[H2] Bu çoklu fraktallik, doğrusal korelasyonla açıklanamaz
+        (IAAFT testinde de anlamlı kalır); dolayısıyla doğrusal olmayan
+        dinamiklerin izidir.
+  \item[H3] Kriz fazı, normalleşme fazından daha güçlü çoklu fraktal yapıya
+        sahiptir.
+  \item[H4] Duygu, tweet hacminden istatistiksel olarak ayrılabilir.
+\end{description}
+
+\subsection{Özgün katkılar}
+% ---------------------------------------------------------------------
+
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Konu seçimi:} Çoklu fraktal analizin afet sonrası kolektif
+        duyguya uygulanması özgündür.
+  \item \textbf{İki olay tasarımı:} Farklı büyüklük ve farklı duygusal
+        profildeki iki bağımsız depremle genellenebilirlik test edilmiştir.
+  \item \textbf{Metodolojik titizlik:} Duygu ölçümünde model seçiminin
+        yanlış sonuç üretebileceği somut gösterilerek düzeltilmiş; analiz
+        parametreleri (ölçek aralığı, pencere) bağımsız kriterlerle
+        (örneğin $R^2$ doğrusallık ölçütü) sabitlenmiştir.
+  \item \textbf{Doğrusal/doğrusal-olmayan ayrımı:} Surrogate hiyerarşisi
+        (shuffle, faz-rastgele, IAAFT) ile ``sadece korelasyon mu, yoksa
+        doğrusal olmayan yapı mı?'' sorusu net biçimde ayrıştırılmıştır.
+  \item \textbf{Reprodüklenebilirlik:} Tüm analiz açık kaynak kodla,
+        sıfırdan yazılan bir MF--DFA motoruyla yapılmış ve bilinen referans
+        süreçlerle (p-model, kesirli Brown hareketi) doğrulanmıştır.
+\end{enumerate}
+
+% =====================================================================
+\section{Kuramsal Arka Plan: Sıfırdan Anlatım}
+% =====================================================================
+
+Bu bölüm, raporun kalbidir. Burada kullanılan her kavram, hiçbir ön bilgi
+varsayılmadan, önce sezgisel olarak, sonra matematiksel olarak anlatılır.
+
+\subsection{Zaman serisi nedir?}
+% ---------------------------------------------------------------------
+
+Bir \textbf{zaman serisi}, belirli bir olayın zaman içinde sırayla ölçülmüş
+değerlerinin listesidir. Gündelik örnekler:
+\begin{itemize}[leftmargin=1.4em]
+  \item Her gün aynı saatte ölçülen hava sıcaklığı;
+  \item Her saniye kaydedilen borsa fiyatı;
+  \item Her dakika hesaplanan ortalama duygu puanı.
+\end{itemize}
+
+Kritik nokta şudur: zaman serisinde \emph{sıra önemlidir}. Aynı sayıları
+karıştırıp rastgele sırada dizsek, artık elimizde aynı \emph{küme} vardır ama
+farklı bir \emph{seri} vardır. Az sonra göreceğimiz gibi, bu projenin en
+güçlü aracı tam da bu ayrımdan yararlanır: ``Sayıların sırası bilgi taşıyor mu?''
+
+Duygu serimizi matematiksel olarak $x_1, x_2, \dots, x_N$ biçiminde yazarız.
+Burada $x_i$, $i$-inci dakikadaki ortalama duygu puanıdır ve $N$ toplam
+dakika sayısıdır.
+
+\subsection{Rastgelelik (stokastik) ve ``null model''}
+% ---------------------------------------------------------------------
+
+Bir sürecin \textbf{rastgele (stokastik)} olması, geleceğinin geçmişten
+\emph{bağımsız} olması demektir. En saf hâli \textbf{beyaz gürültüdür}:
+her değer, aynı dağılımdan bağımsız olarak çekilmiş bir zar atışı gibidir.
+Beyaz gürültüde ``bugün büyükse yarın da büyük olur'' gibi bir eğilim yoktur.
+
+Bilimde bir iddiayı test etmenin en sağlam yolu, onu bir \emph{zıt} iddiayla
+yarıştırmaktır. Zıt iddiaya \textbf{null model} (sıfır hipotezi) denir.
+Bizim durumumuzda doğal null model: \emph{``Duygu serisi, gözlenen dağılıma
+sahip rastgele bir gürültüdür.''} Eğer gözlediğimiz yapı, bu null modelin
+üretebileceğinden \emph{belirgin biçimde} farklıysa, rastgelelik iddiası
+reddedilir.
+
+Burada bir incelik vardır ve projemizin temel fikri buradadır: ``rastgele''
+tek bir şey değildir. İki farklı derecesi vardır:
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Tamamen rastgele} (beyaz gürültü): ne sıra ilişkisi ne
+        yapı vardır.
+  \item \textbf{Doğrusal korelasyonlu rastgele:} değerler rastgeledir ama
+        \emph{birbirine bağlıdır} --- bugünkü değer, dünkü değere doğrusal
+        olarak bağlıdır (örneğin $x_i = 0.9\,x_{i-1} + \text{gürültü}$).
+        Bu tür süreçler ``hafızalı'' görünür ama \emph{doğrusal} kurallarla
+        üretilebilir.
+\end{enumerate}
+
+Bu projenin özü, gözlenen karmaşıklığın \emph{sadece ikinci türden mi} (yani
+doğrusal korelasyon) yoksa \emph{gerçekten doğrusal olmayan bir yapıdan mı}
+kaynaklandığını ayırmaktır. Bunu yapabilmek için sayıların sırasını bozan ama
+doğrusal özellikleri koruyan ``vekil veriler'' üreteceğiz (Bölüm~3.5).
+
+\subsection{Uzun erimli bellek ve Hurst üssü}
+% ---------------------------------------------------------------------
+
+Bir seride ``hafıza'' olup olmadığını ölçmenin klasik yolu
+\textbf{otokorelasyondur}: serinin kendisinin, kendisinin kaydırılmış hâliyle
+ne kadar benzeştiği. Eğer komşu değerler birbirine benziyorsa pozitif
+otokorelasyon vardır.
+
+Bazı süreçlerde bu benzerlik \emph{çok yavaş} azalır; saatler, hatta günler
+sonra bile sürer. Buna \textbf{uzun erimli bellek} denir. Böyle bir serinin
+``hafızası''nı tek bir sayıyla özetleyebiliriz: \textbf{Hurst üssü} $H$.
+
+Sezgisel anlamı:
+\begin{itemize}[leftmargin=1.4em]
+  \item $H = 0.5$: Bellek yok (saf rastgele yürüyüşün artışları gibi).
+  \item $H > 0.5$: \emph{Kalıcı} (persistent). Bir yöne giden seri, o yönde
+        gitmeye devam etme eğilimindedir. Örnek: bir nehrin akışı; uzun süre
+        yüksek kalan bir taşkın.
+  \item $H < 0.5$: \emph{Anti-kalıcı} (anti-persistent). Yüksek değeri düşük,
+        düşük değeri yüksek izler; seri sürekli yön değiştirir. Örnek: bir
+        kumarbazın ``şansının dönmesi''.
+\end{itemize}
+
+Örneğin, duygu serimizde $H \approx 0.8$ bulursak, bu şu demektir: bir kez
+toplum ``kaygı moduna'' girdiğinde, bu hâl kendiliğinden hızla dağılmaz;
+günler boyunca izini sürdürür. Bu, afet sonrası toplumsal iyileşme
+süreçleriyle doğrudan ilgilidir.
+
+\subsection{Fraktal ve ölçekten bağımsızlık}
+% ---------------------------------------------------------------------
+
+\textbf{Fraktal}, ``kendine benzer'' demektir: bir nesnenin parçası, bütününe
+benzer; ne kadar yakından bakarsanız bakın, aynı türde yapı görürsünüz.
+Klasik örnek: \emph{kıyı şeridi}. Bir kıyı çizgisini ne kadar hassas ölçerseniz
+(1 km'lik cetvel yerine 1 m'lik, sonra 1 cm'lik), ölçtüğünüz uzunluk o kadar
+büyür; kesin bir değere yakınsamaz. İşte bu ``ölçekten bağımsızlık,'' fraktal
+geometrinin özüdür (Mandelbrot, 1982).
+
+Zaman serilerinde de benzer bir kavram vardır. Bir serinin ``pürüzlülüğüne''
+farklı zaman ölçeklerinden bakalım: 1 dakikaya, 1 saate, 1 güne. Eğer bu
+pürüzlülük her ölçekte \emph{aynı kuralı} izliyorsa, seri fraktaldır. Matematiksel
+ifadesi bir güç yasasıdır:
+\begin{equation}
+  F(s) \sim s^{H},
+  \label{eq:powerlaw}
+\end{equation}
+burada $s$ baktığımız pencere uzunluğu (ölçek), $F(s)$ o ölçekteki
+dalgalanmanın büyüklüğü, $H$ ise ölçekleme üssüdür. \eqref{eq:powerlaw} gibi
+bir bağıntıya ``ölçekleme yasası'' denir; logaritmik eksende çizildiğinde
+bir doğru verir, eğimi $H$'dir.
+
+\subsection{Tekli (mono) ve çoklu (multi) fraktallik}
+% ---------------------------------------------------------------------
+
+Yukarıdaki $H$ \emph{tek} bir sayıdır. Peki ya bir seri, farklı büyüklükteki
+dalgalanmalar için \emph{farklı} ölçekleme gösteriyorsa? Yani küçük
+dalgalanmalar başka bir üsle, büyük dalgalanmalar başka bir üsle büyüyorsa?
+
+Bu durumda tek bir $H$ yetmez. Seri \textbf{çoklu fraktaldır}. Çoklu
+fraktallik, genellikle ``\emph{intermittency}'' (kesikli patlamalar) ile
+birlikte görülür: uzun sakin dönemler, aralarda ani ve şiddetli patlamalar.
+
+Gündelik benzetmeler:
+\begin{itemize}[leftmargin=1.4em]
+  \item Trafik akışı: çoğu zaman sakindir, ama aniden tıkanabilir.
+  \item Borsa: uzun ``sakin'' dönemler, aralarda volatilite patlamaları.
+  \item Türbülans: aynı akış içinde hem düzenli hem kaotik bölgeler.
+\end{itemize}
+
+Duygu serisinde bunun karşılığı açıktır: yeni bir şok haberi geldiğinde
+(sözgelimi bir enkazdan çocuk çıkarıldığında veya bir artçı sarsıntı olduğunda)
+duygu aniden patlar; sonra tekrar sakinleşir. İşte bu ``sakin \emph{ve}
+patlamalı'' dokuyu ölçmenin aracı çoklu fraktal analizdir.
+
+\subsection{DFA: Dalgalanma Analizi, adım adım}
+% ---------------------------------------------------------------------
+
+Çoklu fraktal analizin temeli, Peng ve arkadaşlarının (1994) geliştirdiği
+\textbf{DFA} (Detrended Fluctuation Analysis, ``eğilimden arındırılmış
+dalgalanma analizi'') yöntemidir. Adım adım anlatalım.
+
+\textbf{1. Adım --- Ortalamayı çıkar.}
+Serinin ortalamasını $\bar{x} = \frac{1}{N}\sum_{i=1}^{N} x_i$ hesaplar ve her
+değerden çıkarırız. Bu, serinin etrafında ``sıfır etrafında dalgalandığı''
+bir hâle gelmesini sağlar.
+
+\textbf{2. Adım --- Profil oluştur (kümülatif toplam).}
+\begin{equation}
+  Y(i) = \sum_{k=1}^{i}\bigl(x_k - \bar{x}\bigr), \qquad i=1,\dots,N.
+  \label{eq:profile}
+\end{equation}
+Bu adım, gürültüyü bir ``rastgele yürüyüşe'' çevirir; trendler ve uzun
+dalgalanmalar böylece belirginleşir. $Y(i)$, artık bir yürüyüşün konumudur.
+
+\textbf{3. Adım --- Pencerelere böl.}
+Profili $Y(i)$'yi, uzunluğu $s$ olan eşit parçalara ayırırız. Toplam pencere
+sayısı $N_s = \lfloor N/s \rfloor$. (Uçta artan kısım için aynı işlem sondan
+başa tekrarlanır ki hiçbir veri boşa gitmesin.)
+
+\textbf{4. Adım --- Yerel trendi çıkar (``detrend'').}
+Her pencerede, $Y(i)$'ye bir polinom (genellikle düz çizgi ya da parabol)
+uyarlar ve \emph{çıkarırız}. Kalan ``artık'' yalnızca o penceredeki dalgalanmadır.
+Bu, seriyi yerel trendlerden arındırır; MF--DFA'nın durağan olmayan
+(nonstationary) verilerle çalışabilmesinin sırrı budur.
+
+\textbf{5. Adım --- Dalgalanmayı ölç.}
+$\nu$-uncu penceredeki artıkların ortalama karesini alalım: $F^2(\nu,s)$.
+Tüm pencereler üzerinden ortalamasını alınca o ölçekteki dalgalanma:
+\begin{equation}
+  F(s) = \left[\frac{1}{N_s}\sum_{\nu=1}^{N_s} F^2(\nu,s)\right]^{1/2}.
+  \label{eq:F2}
+\end{equation}
+
+\textbf{6. Adım --- Ölçekleme yasasını bul.}
+Farklı $s$ değerleri için $F(s)$'i hesaplayıp $\log F(s)$'i $\log s$'ye karşı
+çizeriz. Eğer bir doğru elde edersek, eğimi bize Hurst üssü $H$'yi verir
+(Bkz. Denklem~\eqref{eq:powerlaw}). Doğrusallık (yüksek $R^2$), ölçekleme
+yasasının geçerli olduğunun kanıtıdır; bu projede bu ölçütü titizlikle
+kullandık (bkz. Bölüm~\ref{sec:olcek}).
+
+\subsection{Çoklu Fraktal DFA (MF--DFA)}
+% ---------------------------------------------------------------------
+
+Klasik DFA, dalgalanmayı \emph{ortalama kare} (yani 2.\ mertebe) ile ölçer.
+MF--DFA (Kantelhardt vd., 2002), bu tek ölçüyü bir \emph{ailesine}
+genişletir: her pencereye bir $q$ üssü uygularız,
+\begin{equation}
+  F_q(s) =
+  \begin{cases}
+    \left[\dfrac{1}{N_s}\displaystyle\sum_{\nu=1}^{N_s}
+      \bigl(F^2(\nu,s)\bigr)^{q/2}\right]^{1/q}, & q \neq 0,\\[2.2ex]
+    \exp\!\left[\dfrac{1}{2N_s}\displaystyle\sum_{\nu=1}^{N_s}
+      \ln F^2(\nu,s)\right], & q = 0.
+  \end{cases}
+  \label{eq:Fq}
+\end{equation}
+$q$'nun anlamı şudur:
+\begin{itemize}[leftmargin=1.4em]
+  \item $q > 0$: \emph{büyük} dalgalanmalar baskın hâle gelir (patlamalara bakar).
+  \item $q < 0$: \emph{küçük} dalgalanmalar baskın hâle gelir (sakin dönemlere bakar).
+  \item $q = 0$: logaritmik ortalama (her ikisine de eşit ağırlık).
+\end{itemize}
+
+Sonra her $q$ için ayrı bir ölçekleme yasası ararız:
+\begin{equation}
+  F_q(s) \sim s^{\,h(q)}.
+  \label{eq:hq}
+\end{equation}
+Buradaki $h(q)$ \textbf{genelleştirilmiş Hurst üssüdür}. Şimdi kilit ayrım
+gelir:
+\begin{itemize}[leftmargin=1.4em]
+  \item Eğer $h(q)$ tüm $q$ için \emph{sabit} ise (yani $h(q)=H$), seri
+        \emph{tekli fraktaldır}. Küçük ve büyük dalgalanmalar aynı kurala uyar.
+  \item Eğer $h(q)$ $q$'ya göre \emph{değişiyorsa}, seri \emph{çoklu
+        fraktaldır}. Farklı büyüklükteki dalgalanmalar farklı ölçekleme
+        gösterir; bu, doğrusal olmayan yapının ve intermittency'nin işaretidir.
+\end{itemize}
+
+\subsection{Çoklu fraktal spektrum $f(\alpha)$ ve Legendre dönüşümü}
+% ---------------------------------------------------------------------
+
+$h(q)$ eğrisini, doğrudan yorumlaması biraz soyut olan $f(\alpha)$
+spektrumuna çevirmek gelenekseldir. Önce ölçek üssü:
+\begin{equation}
+  \tau(q) = q\,h(q) - 1 .
+  \label{eq:tau}
+\end{equation}
+$\tau(q)$, ``kütle üssü''dür. Ardından \textbf{Legendre dönüşümü} ile
+\emph{singularite üssü} $\alpha$ ve spektrum yüksekliği $f(\alpha)$ elde edilir:
+\begin{equation}
+  \alpha = \frac{d\tau}{dq}, \qquad f(\alpha) = q\,\alpha - \tau(q).
+  \label{eq:legendre}
+\end{equation}
+
+Bunların anlamı:
+\begin{itemize}[leftmargin=1.4em]
+  \item $\alpha$, bir \emph{yerel pürüzlülük üssüdür} (Hölder üssü). Küçük
+        $\alpha$ çok pürüzlü/patlamalı bölgeleri, büyük $\alpha$ düzgün
+        bölgeleri temsil eder.
+  \item $f(\alpha)$ ise ``$\alpha$ üssüne sahip noktalar kümesinin fraktal
+        boyutudur''; yani o tür bölgelerin ne kadar ``yaygın'' olduğunu söyler.
+  \item Spektrumun \emph{tepe noktası} ($f_{\max}$) genellikle $q=0$'a karşılık
+        gelir ve boyut bilgisi taşır.
+  \item \textbf{Spektrumun genişliği}
+        \begin{equation}
+          \Dal = \alpha_{\max} - \alpha_{\min}
+          \label{eq:width}
+        \end{equation}
+        çoklu fraktalliğin \emph{şiddetidir}. Tekli fraktalda spektrum bir
+        noktaya çöker ($\Dal \to 0$); çoklu fraktalda genişler.
+\end{itemize}
+
+Kısaca: \textbf{$\Dal$ büyükse, seri hem sakin hem patlamalı bölgeler
+barındırıyor ve bunlar farklı ölçekleme yasalarına tabi; yani zengin,
+doğrusal olmayan bir dinamik vardır.}
+
+\subsection{$\Dal$ tek başına yeter mi? Neden surrogate testleri?}
+% ---------------------------------------------------------------------
+
+Burada çok önemli bir tuzak vardır. $s<24$ dakika gibi \emph{çok küçük}
+ölçeklerde ölçüm gürültüsü (her dakikada az tweet olması), ya da seriyi
+\emph{tek bir global trend} (krizden normalleşmeye gidiş) de büyük bir $\Dal$
+yaratabilir. Yani büyük $\Dal$ görmek, otomatik olarak ``doğrusal olmayan
+dinamik'' demek \emph{değildir}. Bu nedenle iki soruyu ayrı ayrı sormamız ve
+\emph{vekil veriler} (surrogate) kullanmamız gerekir:
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Soru 1:} Büyük $\Dal$ gerçekten \emph{zaman sırasından mı}
+        geliyor, yoksa sadece dağılımdan mı? (bkz. \emph{shuffle} testi)
+  \item \textbf{Soru 2:} Büyük $\Dal$ sadece \emph{doğrusal korelasyondan} mı
+        geliyor, yoksa onun ötesinde bir yapı mı var? (bkz. \emph{IAAFT} testi)
+\end{itemize}
+
+Vekil veri, ``gözlenen verinin belirli istatistiksel özelliklerini koruyup
+başka bir özelliğini yok eden'' yapay bir seridir. Eğer gözlenen $\Dal$,
+vekil verinin üretebileceği $\Dal$ dağılımından anlamlı biçimde büyükse,
+``yok edilen'' özellik gerçekten veride vardır. Bu mantık, Bölüm 3.5'te
+ayrıntılı kurulacaktır.
+
+% =====================================================================
+\section{Yöntem}
+% =====================================================================
+
+\subsection{Veri kümesi}
+% ---------------------------------------------------------------------
+
+İki bağımsız deprem olayına ait Türkçe tweet kümeleri kullanılmıştır.
+
+\begin{table}[H]
+\centering
+\caption{Veri kümeleri.}
+\label{tab:data}
+\begin{tabular}{lrrrr}
+\toprule
+Olay & Tweet sayısı & Süre & Olay anı (UTC) & Zaman aralığı (UTC)\\
+\midrule
+Kahramanmaraş (6 Şub 2023) & 942\,180 & 5 gün & 01:17 & 2023-02-06 00:08 -- 02-10 23:59\\
+İzmir (30 Eki 2020)        & 971\,295 & 8 gün & 11:51 & 2020-10-29 21:07 -- 11-06 20:59\\
+\midrule
+\textbf{Toplam} & \textbf{1\,913\,475} & & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Veri kümeleri, Türkçe tweet metni ve zaman damgası içerir (Kaggle kaynaklı,
+açık erişimli). İki olayın seçilme gerekçesi: (i) ikisi de çok büyük ve
+tetikleyicisi kesin bilinen afetlerdir; (ii) farklı duygusal profil
+üretmeleri beklenir (2023: yas/keder; 2020: enkaz ve tsunami kaynaklı korku),
+bu da genellenebilirliği güçlendirir.
+
+\subsection{Duygu ölçümü: model seçiminin kritikliği}
+% ---------------------------------------------------------------------
+
+\subsubsection{Problem: ``Duygu''yu sayıya çevirmek}
+Her tweet'i sayısal duygu değerlerine çevirmek için önceden eğitilmiş
+Transformer tabanlı Türkçe duygu/sentiment modelleri kullanılır. Ancak burada
+kritik bir sorun vardır: \emph{genel amaçlı bir duygu modeli, afet bağlamında
+sistematik olarak yanılabilir.} Örneğin, ``Acil yardım edin!'' ya da
+``vefat edenlere rahmet olsun'' cümleleri, felaket bağlamında duygusal
+olarak ağır (kaygı, üzüntü) olmasına rağmen, bazı modeller tarafından
+sözcük yapısı nedeniyle ``olumlu'' olarak etiketlenebilir.
+
+Bu, saf bir teknik ayrıntı değildir: yanlış bir duygu ölçümü, ardından gelen
+\emph{tüm} fraktal analizi geçersiz kılar. Bu nedenle projenin ilk ciddi işi
+model doğrulaması olmuştur.
+
+\subsubsection{Üç modelin gerçek veride testi}
+Üç aday model, gerçek deprem tweet'leri üzerinde karşılaştırıldı:
+
+\begin{table}[H]
+\centering
+\caption{Duygu modeli seçimi.}
+\label{tab:models}
+\begin{tabular}{p{5.2cm}p{6.6cm}p{2.6cm}}
+\toprule
+Model & Gerçek tweet'lerde gözlenen davranış & Karar\\
+\midrule
+\texttt{saribasmetehan/...sentiment-analysis} (3 sınıf) &
+Felaket bağlamındaki ``yardım/dua/teselli'' dilini yanlışlıkla \emph{pozitif}
+okuyor (örn. ``Acil yardım edin!'' $\to +0.98$). &
+\textbf{Eleme}\\
+\texttt{savasy/bert-base-turkish-sentiment-cased} (2 sınıf) &
+Makul: gerçek veride yaklaşık \%70 negatif; yönü doğru. &
+\textbf{Robustluk}\\
+\texttt{furkankarakuz/turkish-emotion-classifier} (6 duygu) &
+Örnek incelemede tutarlı: korku/üzüntü/öfke/sevinç bağlama uygun. &
+\textbf{Ana ölçüm}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Sonuç:} ana duygu ölçümü olarak 6 boyutlu duygu modeli seçildi;
+2 sınıflı model ise bağımsız bir \emph{robustluk kontrolü} olarak korundu.
+Elenen modelin bulgusu, ``naif model seçimi yanlış bilimsel sonuç üretir''
+dersini somutladığı için projenin metodolojik katkılarından biri olarak
+raporlanmıştır.
+
+\subsubsection{Kullanılan sinyaller}
+6 duygu boyutu (öfke, tiksinme, korku, sevinç, üzüntü, şaşkınlık) doğrudan
+kullanılır. Bunlardan iki \emph{bileşik} sinyal türetilir:
+\begin{align}
+  \text{neg\_emo} &= \text{üzüntü} + \text{korku} + \text{öfke} + \text{tiksinme},\\
+  \text{distress} &= \text{üzüntü} + \text{korku},\\
+  \text{valence\_emo} &= \text{sevinç} - \text{neg\_emo}.
+\end{align}
+\textbf{Ana sinyal \texttt{distress}}'tir (üzüntü + korku), çünkü afet
+bağlamında en temsilî ve en az gürültülü bileşimdir. Bunların yanında
+2 sınıflı modelden \texttt{val\_sav} $= P(\text{poz}) - P(\text{neg})$ ve
+salt kontrol amaçlı \texttt{HACİM} $= \log(1+\text{tweet/dk})$ sinyali analiz
+edilir.
+
+\subsection{Zaman serisi inşası}
+% ---------------------------------------------------------------------
+
+\subsubsection{Dakikalık kutulama}
+Her tweet, zaman damgasına göre bir dakikalık ``kutuya'' atanır ve o kutudaki
+tüm tweet'lerin duygu puanları \emph{ortalaması} alınır. Böylece dakikada bir
+değer içeren düzenli bir seri elde edilir. Kahramanmaraş için $N=7192$,
+İzmir için $N=11513$ kutu oluşur. Boş kutular lineer interpolasyonla
+doldurulur.
+
+\subsubsection{Neden 1 dakika?}
+1 dakika, iki dengeyi gözetir: (i) 5 dakika gibi daha kaba bir çözünürlük kriz
+dinamiğinin ince yapısını kaçırır; (ii) 30 saniye gibi daha ince bir çözünürlük
+çoğu kutuyu boş bırakır ve ölçüm gürültüsünü artırır. 1 dakika, ``dakikada
+onlarca tweet'' yoğunluğuyla ortalama duygu tahmininin güvenilir olduğu en
+ince ölçektir.
+
+\subsubsection{Analiz penceresi kuralı (kritik)}
+Boş kutuların yoğunlaştığı bölgeler, uzun lineer interpolasyon nedeniyle
+\emph{yapay} pürüzsüz parçalar üretir ve bu parçalar büyük ölçeklerde sahte
+çoklu fraktallik yaratabilir. İzmir verisinde olay-öncesi gece
+(2020-10-29 21:07 $\to$ 10-30 10:00) aşırı seyrektir: 884 dakikanın 586'sı
+(yüzde~66) boştur ve bu, ham $\Dal=3.55$ gibi gerçekdışı bir değere yol açar;
+seyrek bölge dışlandığında $\Dal \approx 0.67$'ye iner. Bu nedenle her olay
+için analiz penceresi
+\begin{equation}
+  \text{analiz aralığı} = [\,t_{\text{olay}} - 1\text{ saat},\ t_{\text{son}}\,]
+\end{equation}
+olarak tanımlanmıştır. (Kahramanmaraş'ta gece yeterince yoğun olduğu için bu
+kural etkisizdir.)
+
+\subsubsection{Pencereler}
+Her olay için dört pencere incelenir:
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{TÜM:} analiz aralığının tamamı;
+  \item \textbf{AKUT:} olaydan sonraki ilk 24 saat (kriz);
+  \item \textbf{NORM:} serinin son 48 saati (normalleşme);
+  \item \textbf{HACİM:} $\log(1+\text{tweet/dk})$ (doğrusal kontrol).
+\end{itemize}
+
+\subsection{MF--DFA protokolü ve kalibrasyonu}
+% ---------------------------------------------------------------------
+
+\subsubsection{Parametre seçimi}
+Kullanılan protokol: $\tau$-derecesi $q \in [-5, 5]$ (21 değer; bakışımlı),
+detrend polinom derecesi 2, ölçekler $s_{\min}=32$ ile $s_{\max}=N/4$
+arasında logaritmik olarak 30 adet. Bu parametrelerin seçimi rastgele değildir:
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Ölçek alt sınırı $s_{\min}$:} Gerçek veride $s<24$ dakikada
+        güç yasası fitinin doğrusallığı bozuluyor
+        ($s_{\min}=16$ iken $R^2=0.63$); $s_{\min}\ge 24$ seçilince
+        $R^2\approx 0.94$'e çıkıyor. Bu, küçük ölçekte (kutu-içi örnekleme
+        gürültüsünden kaynaklanan) bir ``çapraz-geçiş'' olduğunu gösterir.
+        Temiz referans bir çoklu fraktalda ise $R^2=0.99$ ve $\Dal$
+        $s_{\min}$'den bağımsızdır. Protokol $s_{\min}=32$ olarak sabitlenmiştir.
+  \item \textbf{$q$ aralığı:} $q\in[-5,5]$ ile $q\in[-10,10]$ neredeyse aynı
+        $\Dal$'yı verir (doyum gözlenir); bu, ölçümün stabil olduğunu gösterir.
+  \item \textbf{Ölçek üst sınırı:} $s_{\max}=N/4$ seçildi (kenar etkilerini
+        sınırlamak için).
+\end{itemize}
+
+\subsubsection{Bilinen süreçlerle doğrulama}
+Motorun doğruluğu iki bağımsız araçla sınandı:
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Kesirli Gauss gürültüsü (fGn):} Spektral sentezle üretilen ve
+        Hurst üssü $H$ bilinen serilerde $h(q{=}2)$ ölçüldü: $H=0.3/0.5/0.7/0.9$
+        için sırasıyla $0.323/0.518/0.704/0.893$ bulundu --- teorik değerlerle
+        uyumlu.
+  \item \textbf{p-model (binom kaskad):} Teorik $\Dal \approx 1.19$ (p=0.3)
+        iken hesaplanan $1.20$; bağıl hata $\%1.2$. (p=0.2 için teorik $2.0$.)
+\end{itemize}
+
+\subsubsection{Kalibrasyon cetveli}
+Aynı protokol, doğası bilinen referans süreçlere uygulanarak bir ``cetvel''
+oluşturuldu. Amaç, gerçek verinin $\Dal$'sını tanıdık süreçlerle
+karşılaştırmaktır.
+
+\begin{table}[H]
+\centering
+\caption{Kalibrasyon cetveli ($q\in[-5,5]$, $s_{\min}=32$).}
+\label{tab:calib}
+\begin{tabular}{llc}
+\toprule
+Süreç & Karakter & $\Dal$ aralığı\\
+\midrule
+Beyaz gürültü & Tamamen rastgele & $0.02$--$0.08$\\
+Tekdüze dağılım & Tamamen rastgele & $\approx 0.02$\\
+Rastgele yürüyüş & Belleksiz birikim & $\approx 0.10$\\
+AR(1), $\phi=0.5$ & Kısa erimli doğrusal hafıza & $\approx 0.14$\\
+AR(1), $\phi=0.9$ & Güçlü doğrusal hafıza & $\approx 0.30$\\
+fBm (H=0.3--0.9) & Tekli fraktal & $0.21$--$0.43$\\
+p-model p=0.3 & Çoklu fraktal & $1.16$--$1.20$\\
+p-model p=0.2 & Güçlü çoklu fraktal & $\approx 2.0$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Surrogate (vekil veri) testleri}
+% ---------------------------------------------------------------------
+
+Ortaya çıkan $\Dal$'nın gerçekten önemli olup olmadığını anlamak için bir
+``kıyaslama hiyerarşisi'' kuruldu. Her surrogate, orijinal seriden türetilir
+ve orijinalin belirli özelliklerini \emph{korur}, belirli özelliklerini
+\emph{yok eder}:
+
+\begin{table}[H]
+\centering
+\caption{Vekil veri (surrogate) hiyerarşisi.}
+\label{tab:surr}
+\begin{tabular}{lll}
+\toprule
+Surrogate & Koruduğu & Yok ettiği (test ettiği)\\
+\midrule
+Shuffle & Genlik dağılımı & Tüm zaman yapısı\\
+Faz-rastgele & Güç spektrumu & Faz (doğrusal olmayan yapı)\\
+IAAFT & Güç spektrumu + dağılım & Doğrusal olmayan çoklu fraktallik\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Shuffle (karıştırma):} Aynı değerleri rastgele sırayla dizeriz. Böylece
+``hangi değerlerin görüldüğü'' korunur, ``hangi sırayla görüldüğü'' yok edilir.
+Gözlenen $\Dal$, shuffle null dağılımından anlamlı büyükse, zaman sırası
+bilgi taşıyordur.
+
+\textbf{IAAFT} (Iterative Amplitude Adjusted Fourier Transform; Schreiber \&
+Schmitz, 1996): Fazları rastgeleleştirir ama hem genlik dağılımını hem de güç
+spektrumunu (yani \emph{doğrusal} otokorelasyonu) iteratif olarak korur. Bu
+surrogate, ``aynı doğrusal korelasyona sahip, ama doğrusal olmayan yapıdan
+yoksun'' bir seriyi temsil eder. Gözlenen $\Dal$, IAAFT null dağılımından
+anlamlı büyükse, elimizdeki çoklu fraktallik \emph{doğrusal korelasyonla
+açıklanamaz}; yani doğrusal olmayan dinamiklerin izidir.
+
+\subsection{İstatistiksel çıkarım}
+% ---------------------------------------------------------------------
+
+Her gerçek pencere için, ilgili surrogate'ten $n=100$ adet üretilir ve her
+birinin $\Dal$'sı hesaplanır. Bu, bir \emph{null dağılım} verir. Gözlemi
+karşılaştırmak için:
+\begin{equation}
+  z = \frac{\Dal_{\text{göz}} - \overline{\Dal}_{\text{null}}}
+           {\sigma_{\text{null}}}\;,
+\end{equation}
+ve kritik değerden büyüklerin oranı olarak $p$-değeri. Yorum: büyük $z$
+(gözlenen $\Dal$ null'dan çok daha büyük) $\Rightarrow$ gerçek yapı var.
+$\Dal$ pozitif tanımlı olduğundan, ``IAAFT ne kadar zayıfsa o kadar iyi'';
+$z \approx 0$ ise çoklu fraktallik tamamen doğrusal süreçlerle açıklanabilir
+demektir.
+
+\subsection{Kriz ve rutin fazların ayrıştırılması}
+% ---------------------------------------------------------------------
+
+Araştırma sorusu 3'ü test etmek için her olay iki faza bölünür:
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{AKUT:} olay anından sonraki ilk 24 saat (kolektif şok).
+  \item \textbf{NORM:} serinin son 48 saati (toplumsal normalleşme).
+\end{itemize}
+Her iki fazda da $\Dal$ ve surrogate testleri ayrı ayrı hesaplanır; aradaki
+fark, çoklu fraktalliğin krizle ilişkisini gösterir.
+
+\subsection{Robustluk analizleri}
+% ---------------------------------------------------------------------
+
+Büyük $\Dal$'nın dört olası yapay kaynağı sistematik olarak elenmiştir:
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Global trend:} Seriden lineer/kuadratik/kübik trend çıkarılır;
+        $\Dal$ korunuyorsa gerçek, çöküyorsa trende bağlıdır.
+  \item \textbf{Sirkadiyen (24 saatlik) döngü:} İnsan aktivitesi gün içinde
+        dalgalandığı için, saat başına ortalaması çıkarılarak test edilir.
+  \item \textbf{Ölçek/pencere hassasiyeti:} $q$ aralığı, $s_{\min}$, pencere
+        uzunluğu değiştirilerek sonuçların kararlılığı sınanır.
+  \item \textbf{Model bağımlılığı:} Farklı duygu modelinden türetilen
+        \texttt{val\_sav} sinyaliyle sonuçlar çapraz-doğrulanır.
+\end{enumerate}
+
+\subsection{Yazılım, donanım ve tekrarlanabilirlik}
+% ---------------------------------------------------------------------
+
+Tüm analiz, açık kaynak Python ile yazılmıştır. MF--DFA motoru, surrogate
+üreticileri (IAAFT, shuffle, faz) ve kalibrasyon araçları sıfırdan
+kodlanmıştır. Duygu puanlaması PyTorch + Transformers ile GPU üzerinde
+yapılmıştır. Sonuçlar, her adımı yeniden üretilebilir kılacak şekilde
+kaydedilmiştir (bkz. Ek~\ref{app:yazilim}).
+
+% =====================================================================
+\section{Bulgular}
+% =====================================================================
+
+\subsection{Çekirdek doğrulama}
+% ---------------------------------------------------------------------
+
+Analize geçmeden önce motorun güvenilirliği kanıtlanmıştır. Bilinen süreçlerde
+$\Dal$ beklendiği gibi çıkmıştır: beyaz gürültüde neredeyse sıfır, tekli
+fraktallarda düşük, p-model'de yüksek (Tablo~\ref{tab:calib}). Bu, ``eğer
+gerçek veride büyük $\Dal$ bulursak, bu motorun ürettiği bir artefakt
+değildir'' güvencesini verir.
+
+\subsection{Ölçek aralığı ve protokol sağlamlığı}
+\label{sec:olcek}
+% ---------------------------------------------------------------------
+
+Gerçek duygu serisinde küçük ölçeklerde bir çapraz-geçiş tespit edilmiş ve
+analiz penceresi $s_{\min}=32$ ile sınırlandırılmıştır. Bu düzeltme önemlidir:
+düzeltilmeden önce $\Dal$ yapay olarak $1.8$ civarında çıkarken, geçerli
+ölçek aralığında gerçek değer $\approx 0.7$--$0.9$ mertebesindedir. Global
+trend çıkarıldığında sonuç korunur; sirkadiyen çıkarmada da değişmez. Yani
+gözlenen yapı ne trend, ne günlük döngü, ne de ölçüm gürültüsüdür.
+
+\subsection{Olay 1: Kahramanmaraş 2023}
+% ---------------------------------------------------------------------
+
+Tam seri ve fazlar için $\Dal$ ve IAAFT $z$-skorları Tablo~\ref{tab:km}'de
+verilmiştir.
+
+\begin{table}[H]
+\centering
+\caption{Kahramanmaraş 2023 duygusal sinyallerinde MF--DFA ve IAAFT testi.}
+\label{tab:km}
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{2}{c}{TÜM} & \multicolumn{2}{c}{AKUT (24s)}
+& \multicolumn{2}{c}{NORM (48s)}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Sinyal & $\Dal$ & IAAFT $z$ & $\Dal$ & IAAFT $z$ & $\Dal$ & IAAFT $z$\\
+\midrule
+\textbf{distress} & 0.78 & $+11.6$ & 0.86 & $-0.8$ & 0.38 & $+7.2$\\
+üzüntü           & 0.41 & $+7.1$  & 0.81 & $+0.2$ & 0.42 & $+5.8$\\
+korku            & 0.57 & $+4.5$  & 0.68 & $+1.2$ & 0.29 & $+3.1$\\
+öfke             & 1.26 & $+22.6$ & 1.99 & $+4.3$ & 0.23 & $+3.7$\\
+sevinç           & 0.87 & $+20.7$ & 1.18 & $+4.3$ & 0.11 & $+1.4$\\
+val\_sav (kontrol)& --- & --- & --- & --- & --- & ---\\
+HACİM (kontrol)  & 1.00 & $+0.3$  & --- & --- & --- & ---\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Gözlemler:
+\begin{itemize}[leftmargin=1.4em]
+  \item Ana sinyal \texttt{distress}, hem \emph{shuffle} hem \emph{IAAFT}
+        null'larından anlamlı büyük $\Dal$ verir ($z>10$, $p<0.01$): yani
+        çoklu fraktal yapı hem zaman sırasına hem de doğrusal olmayan
+        mekanizmalara bağlıdır.
+  \item \textbf{Öfke} en yüksek $\Dal$'yı gösterir ($1.26$; akutta $1.99$).
+        Bu, ``öfkenin patlamalı/intermittent'' doğasıyla tutarlıdır.
+  \item \textbf{Normalleşme fazında} çoklu fraktallik belirgin biçimde
+        zayıflar (distress $0.78 \to 0.38$; sevinç $0.87 \to 0.11$). Yani
+        kolektif duygu, kriz geçtikçe daha ``rastgele'' bir hâle yaklaşır.
+  \item \textbf{Kontrol:} Tweet hacminin $\Dal$'sı büyük görünse de
+        ($\approx 1.0$) IAAFT null'undan anlamlı sapmaz ($z=+0.3$). Bu,
+        hacmin karmaşıklığının \emph{doğrusal} süreçlerle açıklanabildiğini,
+        oysa duygunun karmaşıklığının açıklanamadığını gösterir: duygu,
+        yalnızca ``aktivite'' değildir.
+\end{itemize}
+
+\subsection{İzmir 2020: İkinci bağımsız olay}
+% ---------------------------------------------------------------------
+
+İzmir verisi, aynı protokolle analiz edilmiştir. Duygu profili
+Kahramanmaraş'tan \emph{farklıdır}: İzmir'de baskın duygu \textbf{korkudur}
+($\%40$), üzüntü \%28'dir. Buna karşılık Kahramanmaraş'ta baskın duygu
+\textbf{üzüntüdür} ($\%37$). Bu, iki olayın toplumsal psikolojisinin farklı
+olduğunu gösterir (2020: enkaz altında kurtarma ve tsunami korkusu; 2023:
+çok geniş çaplı yas). İzmir'de seyrek olay-öncesi gece dışlandıktan sonra
+tüm seri için $\Dal \approx 0.67$ bulunmuştur; bu, Kahramanmaraş ile
+\emph{tutarlı} bir mertebedir ve sonuçların tek bir olaya özgü olmadığını
+destekler. (İzmir'in tüm sinyal ve pencere tablosu, analiz tamamlandığında
+bu bölüme eklenecektir.)
+
+\subsection{Olaylar arası karşılaştırma ve doğrusal/doğrusal-olmayan ayrımı}
+% ---------------------------------------------------------------------
+
+Her iki olayda da ortak desen şudur: duygu sinyalleri (özellikle distress,
+öfke) anlamlı $\Dal$ verirken, salt hacim sinyali IAAFT ile açıklanabilir.
+Tablo~\ref{tab:surr} ile birlikte bu, şu sonuca götürür: \emph{kolektif
+duygunun karmaşıklığı, bir doğrusal gürültü sürecine indirgenemez.}
+
+\subsection{Robustluk bulguları}
+% ---------------------------------------------------------------------
+
+\begin{itemize}[leftmargin=1.4em]
+  \item Trend (lineer/kuadratik/kübik) çıkarıldığında $\Dal$ korunmuştur:
+        sonuç global trendin ürünü değildir.
+  \item Sirkadiyen döngü çıkarıldığında $\Dal$ değişmemiştir: 24 saatlik
+        aktivite ritmi bir artefakt kaynağı değildir.
+  \item $q$ aralığı genişletildiğinde $\Dal$ doyuma ulaşır: ölçüm stabildir.
+  \item İkinci duygu modelinden (\texttt{val\_sav}) elde edilen seri,
+        benzer yönde sonuç verir: ölçüm modelden bağımsızdır.
+\end{itemize}
+
+% =====================================================================
+\section{Tartışma}
+% =====================================================================
+
+\subsection{Ana bulgu: Duygu serisi çoklu fraktaldır}
+% ---------------------------------------------------------------------
+
+Elde edilen sonuçlar, araştırma sorularının çoğunu olumlu yanıtlar. Kolektif
+duygu zaman serisi (i) saf rastgele \emph{değildir}, (ii) sadece doğrusal
+korelasyonla da açıklanamaz, (iii) kriz ve normalleşme fazlarında farklı
+davranır, (iv) salt aktivite yoğunluğundan ayrılabilir. Bu dört madde
+birlikte, H1--H4 hipotezlerini destekler.
+
+Bunun düşünsel anlamı şudur: sosyal medya duygusu, ``milyonlarca bağımsız
+kişinin bağımsız kararları'' olarak indirgenebilecek bir gürültü değildir;
+içinde \emph{doğrusal olmayan, ölçekten bağımsız, uzun erimli bir düzen}
+barındırır. Bu, kalabalık insan davranışlarının bazı yönleriyle türbülans ve
+finansal piyasa gibi ``kendine örgütlenen'' sistemlere benzediğini gösterir.
+
+\subsection{Kriz ve normalleşme}
+% ---------------------------------------------------------------------
+
+Çoklu fraktalliğin kriz anında güçlenip normalleşme sürecinde zayıflaması,
+\emph{kolektif duygunun bir ``karmaşıklık imzası'' olduğunu} ve bu imzanın
+toplumsal iyileşme süreciyle birlikte çözüldüğünü göstermektedir. Bu,
+gelecekte bir ``erken uyarı göstergesi'' (toplumsal gerginlik/panik
+yoğunlaşması) geliştirmeye kapı aralar: $\Dal$'daki ani yükselişler, olağan
+dışı bir toplumsal hareketlenmenin işareti olabilir.
+
+\subsection{Duygu, aktivite yoğunluğundan farklıdır}
+% ---------------------------------------------------------------------
+
+Belki de en \emph{pratik} bulgu budur: Hacim serisinin görünür karmaşıklığı
+büyük ölçüde doğrusal (otokorelasyonlu gürültü) iken, \emph{aynı dakikalarda}
+ölçülen duygu serisinin karmaşıklığı açıklanamaz. Yani içerik (duygu) ile
+miktar (tweet sayısı) farklı ölçekleme yasalarına tabidir. Bu ayrım, ``sadece
+tweet sayısına bakarak duygu analizi yapmak'' yaklaşımının yetersiz olacağını
+göstermesi bakımından değerlidir.
+
+\subsection{Metodolojik dersler}
+% ---------------------------------------------------------------------
+
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Model seçimi kritiktir.} Felaket bağlamında sosyal medya
+        duygu ölçümünde, ``yardım/dua/teselli'' dilini yanlış okuyan naif bir
+        model, tüm fraktal analizi geçersiz kılabilir. Bu çalışma, üç modeli
+        gerçek veride karşılaştırarak bu tuzağı somutlamıştır.
+  \item \textbf{Ölçek aralığı $R^2$ ile sabitlenmelidir.} Küçük ölçekteki
+        çapraz-geçişi görmezden gelmek, $\Dal$'yı olduğundan büyük gösterir.
+  \item \textbf{Seyrek veri bölgeleri dışlanmalıdır.} Uzun interpolasyonlar
+        yapay çoklu fraktallik üretir; bu, $\Dal$'yı $5$ katına kadar
+        şişirebilir.
+\end{enumerate}
+
+\subsection{Sınırlılıklar}
+% ---------------------------------------------------------------------
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Duygu ölçümü tam değildir:} Modeller bağlamı sınırlı anlar.
+        Bunu azaltmak için çapraz-model doğrulaması yapılmıştır.
+  \item \textbf{Temsilî olmayan örneklem:} Sosyal medya kullanıcıları,
+        nüfusun tamamını değil, kendini ifade eden bir kesimini temsil eder.
+  \item \textbf{İki olayla sınırlı genellenebilirlik:} Sonuçlar iki olayla
+        tutarlıdır, ancak daha geniş bir olay setiyle pekiştirilmelidir.
+  \item \textbf{Nonstationarity:} Kriz$\to$normalleşme geçişi büyük ölçekleri
+        etkiler; bu, detrend analizleriyle kontrol edilmiştir.
+\end{itemize}
+
+\subsection{Genellenebilirlik}
+% ---------------------------------------------------------------------
+
+Farklı yıl, büyüklük ve duygusal profile sahip iki bağımsız olayda aynı
+nitel desenin (anlamlı $\Dal$, krizde güçlenme) görülmesi, bulgunun bir
+olaya özgü tesadüf olmadığını, kolektif duygu dinamiğinin genel bir özelliği
+olabileceğini işaret eder.
+
+% =====================================================================
+\section{Sonuç ve Gelecek Çalışmalar}
+% =====================================================================
+
+Bu proje, basit ama derin bir soruyla başladı: ``Bir deprem sırasında
+milyonlarca insanın birlikte ürettiği duygu, rastgele midir?'' Yanıt, hayır
+çıktı. Kolektif duygu zaman serisi, hem zaman sırasına hem de doğrusal
+olmayan mekanizmalara bağlı, ölçekten bağımsız, çoklu fraktal bir yapı taşır;
+bu yapı kriz anında güçlenir, normalleşmeyle zayıflar ve salt ``tweet
+sayısından'' ayrıştırılabilir.
+
+\textbf{Gelecek çalışmalar:}
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Daha çok olay:} Farklı türde krizler (yangın, sel, salgın)
+        eklenerek genellenebilirlik genişletilebilir.
+  \item \textbf{Erken uyarı göstergesi:} $\Dal$'daki ani yükseliş, gerçek
+        zamanlı toplumsal gerginlik uyarısı olarak test edilebilir.
+  \item \textbf{İleri yöntemler:} A-MFDFA (asalama etkilerini ayırma),
+        çok değişkenli MF--DFA, ağ analiziyle birlikte kullanım.
+  \item \textbf{Coğrafi/yapısal ayrıştırma:} Kurtarma, kayıp, haber, destek
+        gibi alt-temalara göre seriler bölünebilir.
+\end{enumerate}
+
+% =====================================================================
+\section*{Kaynaklar}
+\addcontentsline{toc}{section}{Kaynaklar}
+% =====================================================================
+\begin{thebibliography}{99}
+\bibitem{kantelhardt2002} J. W. Kantelhardt, S. A. Zschiegner, E. Koscielny-Bunde,
+A. Havlin, S. Bunde, H. E. Stanley, ``Multifractal detrended fluctuation
+analysis of nonstationary time series,'' \emph{Physica A} \textbf{316}, 87--114, 2002.
+\bibitem{peng1994} C.-K. Peng, S. V. Buldyrev, S. Havlin, M. Simons,
+H. E. Stanley, A. L. Goldberger, ``Mosaic organization of DNA nucleotides,''
+\emph{Physical Review E} \textbf{49}, 1685, 1994.
+\bibitem{peng1995} C.-K. Peng et al., ``Long-range correlations in nucleotide
+sequences'' ve ``Quantification of scaling exponents ... heartbeat,'' 1995.
+\bibitem{schreiber1996} T. Schreiber, A. Schmitz, ``Improved surrogate data for
+nonlinearity tests,'' \emph{Physical Review Letters} \textbf{77}, 635, 1996.
+\bibitem{mandelbrot1982} B. B. Mandelbrot, \emph{The Fractal Geometry of Nature},
+W. H. Freeman, 1982.
+\bibitem{meneveau1987} C. Meneveau, K. R. Sreenivasan, ``Simple multifractal
+cascade model for the dissipation rate,'' \emph{Physical Review A} \textbf{36}, 1987.
+\bibitem{bacry2001} E. Bacry, J. Delour, J.-F. Muzy, ``Multifractal random
+walk,'' \emph{Physical Review E} \textbf{64}, 026103, 2001.
+\bibitem{calvet2004} L. Calvet, A. Fisher, ``How to forecast long-run
+volatility,'' \emph{Journal of Financial Econometrics}, 2004.
+\bibitem{ihlen2012} E. A. F. Ihlen, ``Introduction to multifractal detrended
+fluctuation analysis in Matlab,'' \emph{Frontiers in Physiology} \textbf{3}, 141, 2012.
+\bibitem{stanley1999} H. E. Stanley et al., ``Statistical physics and
+physiology: from DNA to heartbeats,'' 1999.
+\bibitem{kantelhardt2002b} D. Rybski, S. V. Buldyrev, S. Havlin, F. Liljeros,
+H. A. Makse, ``Clustering of human interaction'' (sosyal sistem örneği).
+\bibitem{kramer2014} A. D. I. Kramer, J. E. Guillory, J. T. Hancock,
+``Experimental evidence of massive-scale emotional contagion through social
+networks,'' \emph{PNAS} \textbf{111}, 2014.
+\bibitem{golder2011} S. A. Golder, M. W. Macy, ``Diurnal and seasonal mood
+vary with work, sleep, and daylength across diverse cultures,''
+\emph{Science} \textbf{333}, 2011.
+\end{thebibliography}
+
+% =====================================================================
+\appendix
+\section{Formüllerin ayrıntılı türetimi}
+\label{app:formul}
+% =====================================================================
+
+\textbf{(a) $q=0$ dalının türetimi.} \eqref{eq:Fq} tanımında $q\to 0$
+limitini alalım. $x^{q} = e^{q\ln x} \approx 1 + q\ln x$ olduğundan,
+\begin{equation}
+  \frac{1}{q}\ln\!\left[\frac{1}{N_s}\sum_\nu (F^2)^{q/2}\right]
+  \xrightarrow{q\to 0} \frac{1}{2N_s}\sum_\nu \ln F^2(\nu,s),
+\end{equation}
+bu da $\log$-ortalamanın üstelidir. Bu yüzden $q=0$ dalı
+$F_0(s)=\exp\!\bigl[\tfrac{1}{2N_s}\sum \ln F^2\bigr]$ olarak yazılır.
+(Bu projede bu dal bağımsız doğrulamayla düzeltilmiştir; önceki hatalı sürüm
+$h(0)$'ı iki katı hesaplıyordu.)
+
+\vspace{0.5em}
+\textbf{p-model genişliği.} Binom kaskadında her adımda kütle $p$ ve $1-p$
+oranında ikiye bölünür. Ölçek üssü
+$\tau(q) = -\ln\!\bigl(p^q + (1-p)^q\bigr)/\ln 2$ olur; Legendre dönüşümüyle
+$\alpha_{\min} = -\log_2 p$ ve $\alpha_{\max} = -\log_2(1-p)$ elde edilir.
+Böylece
+\begin{equation}
+  \Dal = \alpha_{\max} - \alpha_{\min} = \log_2\frac{1-p}{p}.
+\end{equation}
+$p=0.3$ için $\Dal \approx 1.19$; bu, hesaplanan $1.20$ ile uyuşur.
+
+\section{Yazılım mimarisi}
+\label{app:yazilim}
+\begin{itemize}[leftmargin=1.4em]
+  \item \texttt{mfdfa\_core.py} --- MF--DFA motoru ve surrogate üreticileri.
+  \item \texttt{calibration.py}, \texttt{verify\_fix.py} --- doğrulama ve
+        kalibrasyon cetveli.
+  \item \texttt{score2.py} --- duygu puanlaması (iki olay, iki model).
+  \item \texttt{build\_series2.py} --- dakikalık zaman serisi üretimi.
+  \item \texttt{analyze2.py}, \texttt{run\_analysis.py} --- MF--DFA + surrogate
+        analiz sürücüsü.
+  \item \texttt{compare\_events2.py} --- olaylar arası karşılaştırma.
+  \item Robustluk: \texttt{robust\_check.py}, \texttt{scale\_test.py},
+        \texttt{r2\_check.py}, \texttt{diurnal\_check.py}, \texttt{qsensitivity.py}.
+\end{itemize}
+
+\end{document}
