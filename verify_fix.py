@@ -2,19 +2,12 @@
 import sys
 import numpy as np
 sys.path.insert(0, r"C:\TUBITAK_Proje")
-from mfdfa_core import mfdfa, spectrum_width, pmodel_cascade, theoretical_alpha
+from mfdfa_core import (mfdfa, spectrum_width, pmodel_cascade, theoretical_alpha,
+                        fgn, fbm, white_noise)
 
 Q = np.linspace(-5, 5, 21)
 i2 = int(np.where(np.isclose(Q, 2.0))[0][0])
 rng = np.random.default_rng(0)
-
-
-def fgn(N, H, rng):
-    fr = np.fft.rfftfreq(N)
-    fr[0] = 1e-12
-    amp = fr ** (-(H - 0.5))
-    ph = rng.uniform(0, 2 * np.pi, len(amp))
-    return np.fft.irfft(amp * np.exp(1j * ph), n=N)
 
 
 print("=== DUZELTME DOGRULAMASI ===")

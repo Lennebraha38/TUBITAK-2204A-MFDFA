@@ -38,6 +38,71 @@ def theoretical_alpha(q, p):
 
 
 # ============================================================
+# 1b. REFERANS SURECLER (dogrulama / kalibrasyon icin)
+# ============================================================
+
+def fgn(N, H, rng):
+    """
+    Fraksiyonel Gauss gurultu (fGn) - spektral sentez.
+    Guc spektrumu |f|^{-(2H-1)}.
+
+    Bu, projenin Hurst referansidir: DFA ile olculen uss H'dir
+    (tests/test_mfdfa.py: H=0.3/0.5/0.7/0.9 -> 0.30/0.51/0.71/0.92).
+    Tekli fraktaldir (Delta_alpha ~ 0), yani IAAFT null'unu ASMAMALI.
+    """
+    fr = np.fft.rfftfreq(N)
+    fr[0] = 1e-12
+    amp = fr ** (-(H - 0.5))
+    ph = rng.uniform(0, 2 * np.pi, len(amp))
+    return np.fft.irfft(amp * np.exp(1j * ph), n=N)
+
+
+def mrw(N, sigma=0.5, rng=None, win=64):
+    """
+    Multifraktal Rastgele Yuruyus (MRW; Bacry, Delour & Muzy 2001).
+
+        y_{t+1} = y_t + b_t * eps_t ,   b_t = exp(omega_t - sigma^2/2)
+
+    omega_t: Gausssurec, uzun erimli korelasyonlu (PSD ~ 1/f^2).
+    b_t: zamanla YAVAS DEGISTEN oynaklik (intermittency) -> MF-DFA bunu
+    coklu fraktallik olarak gorur.
+
+    MARGIN DAGILIMI DUZGUN (suretik) oldugu icin IAAFT surrogu bunu
+    YIKAMAZ -> IAAFT testi bu surecte gecerlidir (p-modelin aksine).
+
+    NOT: sigma arttikca Delta_alpha monoton artar (0.3->0.14, 0.5->0.55,
+    0.8->1.00). sigma>0.8'de bant sinirlamasi artefaktlari belirir; bu
+    yuzden kalibrasyonda sigma <= 0.8 kullanilir.
+    """
+    rng = rng if rng is not None else np.random.default_rng(0)
+    fr = np.fft.rfftfreq(N)
+    amp = np.zeros_like(fr)
+    amp[1:] = 1.0 / fr[1:]           # PSD ~ 1/f^2
+    ph = rng.uniform(0, 2 * np.pi, len(amp))
+    om = np.fft.irfft(amp * np.exp(1j * ph), n=N)
+    sd = om.std()
+    if sd > 0:
+        om = om / sd * np.sqrt(2.0) * sigma
+    b = np.exp(om - 0.5 * sigma ** 2)
+    eps = rng.standard_normal(N)
+    return np.cumsum(b * eps)
+
+
+def ar1(N, phi, rng):
+    """Otokorelasyonlu AR(1) sureci: x_t = phi*x_{t-1} + e_t (dogrusal bellek)."""
+    e = rng.standard_normal(N)
+    x = np.zeros(N)
+    for i in range(1, N):
+        x[i] = phi * x[i - 1] + e[i]
+    return x
+
+
+def white_noise(N, rng):
+    """Beyaz gurultu (rastgele, belleksiz)."""
+    return rng.standard_normal(N)
+
+
+# ============================================================
 # 2. MF-DFA
 # ============================================================
 

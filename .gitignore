@@ -29,3 +29,11 @@ env/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Test / pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Calisma loglari (ciktilar results\ icinde .csv/.png/.txt olarak tutulur)
+*.log

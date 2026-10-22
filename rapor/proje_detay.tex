@@ -71,16 +71,22 @@ ayrışıp ayrışmadığı \emph{surrogate (vekil veri) testleri} ile sınanmı
 Sonuçlar üç başlıkta özetlenebilir. Birincisi, duygu zaman serisi \emph{tamamen
 rastgele değildir}; gözlenen çoklu fraktallik genişliği ($\Dal$), aynı dağılıma
 ve aynı doğrusal korelasyona sahip vekil verilerin ürettiğinden istatistiksel
-olarak anlamlı biçimde büyüktür. Yani duyguda, doğrusal korelasyonla
-açıklanamayan, gerçek bir \emph{doğrusal olmayan} yapı vardır. İkincisi, bu
-yapı \emph{zamanla değişir}: kriz anında (depremden sonraki ilk saatler)
-çoklu fraktallik güçlüdür; günler geçip toplum normale döndükçe zayıflar.
-Üçüncüsü, duygu ile saf \emph{aktivite yoğunluğu} (dakikadaki tweet sayısı)
-birbirinden ayrılır: tweet hacminin görünür karmaşıklığı, büyük ölçüde doğrusal
-bir süreçle açıklanabilirken, duygunun karmaşıklığı açıklanamaz. Projenin bir
-diğer önemli çıktısı metodolojiktir: sosyal medya duygu ölçümünde naif bir
-model seçiminin sistematik ve ciddi hata üretebileceği somut örneklerle
-gösterilmiş ve bu hata ayıklanarak giderilmiştir.
+olarak anlamlı biçimde büyüktür ($z\approx +10$--$+22$). Yani duyguda,
+doğrusal korelasyonla açıklanamayan, gerçek bir \emph{doğrusal olmayan} yapı
+vardır. İkincisi, bu yapı \emph{zamanla değişir}: kriz anında (depremden
+sonraki ilk saatler) çoklu fraktallik güçlüdür; günler geçip toplum normale
+döndükçe zayıflar ($\Delta\alpha$ Kahramanmaraş'ta $0.78\to0.38$, İzmir'de
+$0.67\to0.25$). Üçüncüsü, bulgu iki bağımsız olayda, iki farklı duygu modeliyle
+ve farklı veri hacimleriyle tekrarlanmıştır; dolayısıyla tek bir olaya özgü
+tesadüf değildir.
+
+Projenin bir diğer önemli çıktısı metodolojiktir: sosyal medya duygu ölçümünde
+naif bir model seçiminin sistematik ve ciddi hata üretebileceği somut
+örneklerle gösterilmiş ve bu hata ayıklanarak giderilmiştir. Ayrıca
+surrogate testlerinin kullanımına ilişkin bir sınırlamanın varlığı
+deneysel olarak belirlenmiş ve belgelenmiştir: IAAFT null'u, \emph{ayrık} genlik
+dağılımlı serilerde çoklu fraktalliği yok edemeyebilmekte; bu nedenle tüm
+sonuçlar iki bağımsız null modeliyle (IAAFT ve shuffle) birlikte raporlanmıştır.
 
 \textbf{Anahtar kelimeler:} çoklu fraktal analiz, MF--DFA, Hurst üssü,
 surrogate testi, IAAFT, duygu zaman serisi, sosyal medya, deprem,
@@ -229,6 +235,8 @@ ayırarak ortaya koymak.
   \item[H3] Kriz fazı, normalleşme fazından daha güçlü çoklu fraktal yapıya
         sahiptir.
   \item[H4] Duygu, tweet hacminden istatistiksel olarak ayrılabilir.
+        \emph{(Bu hipotez yalnızca kısmen desteklenmiştir; bkz.
+        Bölüm~\ref{sec:sinirlilik}.)}
 \end{description}
 
 \subsection{Özgün katkılar}
@@ -248,7 +256,13 @@ ayırarak ortaya koymak.
         doğrusal olmayan yapı mı?'' sorusu net biçimde ayrıştırılmıştır.
   \item \textbf{Reprodüklenebilirlik:} Tüm analiz açık kaynak kodla,
         sıfırdan yazılan bir MF--DFA motoruyla yapılmış ve bilinen referans
-        süreçlerle (p-model, kesirli Brown hareketi) doğrulanmıştır.
+        süreçlerle (p-model, kesirli Gauss gürültüsü, multifraktal rastgele
+        yürüyüş) doğrulanmıştır. 28 adet birim testi içeren otomatik test
+        paketi, matematiksel doğruluğun sürekli denetlenmesini sağlar.
+  \item \textbf{Null model sınırlamasının belgelenmesi:} IAAFT null'unun
+        ayrık genlik dağılımlı serilerde çoklu fraktalliği yok edemediği
+        deneysel olarak gösterilmiş ve bu durumda çift null testi
+        (IAAFT + shuffle) kullanılması önerilmiştir.
 \end{enumerate}
 
 % =====================================================================
@@ -405,9 +419,9 @@ Bu adım, gürültüyü bir ``rastgele yürüyüşe'' çevirir; trendler ve uzun
 dalgalanmalar böylece belirginleşir. $Y(i)$, artık bir yürüyüşün konumudur.
 
 \textbf{3. Adım --- Pencerelere böl.}
-Profili $Y(i)$'yi, uzunluğu $s$ olan eşit parçalara ayırırız. Toplam pencere
-sayısı $N_s = \lfloor N/s \rfloor$. (Uçta artan kısım için aynı işlem sondan
-başa tekrarlanır ki hiçbir veri boşa gitmesin.)
+Profili $Y(i)$'yi (Denklem~\eqref{eq:profile}), uzunluğu $s$ olan eşit parçalara
+ayırırız. Toplam pencere sayısı $N_s = \lfloor N/s \rfloor$. (Uçta artan kısım
+için aynı işlem sondan başa tekrarlanır ki hiçbir veri boşa gitmesin.)
 
 \textbf{4. Adım --- Yerel trendi çıkar (``detrend'').}
 Her pencerede, $Y(i)$'ye bir polinom (genellikle düz çizgi ya da parabol)
@@ -424,18 +438,19 @@ Tüm pencereler üzerinden ortalamasını alınca o ölçekteki dalgalanma:
 \end{equation}
 
 \textbf{6. Adım --- Ölçekleme yasasını bul.}
-Farklı $s$ değerleri için $F(s)$'i hesaplayıp $\log F(s)$'i $\log s$'ye karşı
-çizeriz. Eğer bir doğru elde edersek, eğimi bize Hurst üssü $H$'yi verir
-(Bkz. Denklem~\eqref{eq:powerlaw}). Doğrusallık (yüksek $R^2$), ölçekleme
-yasasının geçerli olduğunun kanıtıdır; bu projede bu ölçütü titizlikle
-kullandık (bkz. Bölüm~\ref{sec:olcek}).
+Farklı $s$ değerleri için $F(s)$'i (Denklem~\eqref{eq:F2}) hesaplayıp
+$\log F(s)$'i $\log s$'ye karşı çizeriz. Eğer bir doğru elde edersek, eğimi
+bize Hurst üssü $H$'yi verir (Bkz. Denklem~\eqref{eq:powerlaw}). Doğrusallık
+(yüksek $R^2$), ölçekleme yasasının geçerli olduğunun kanıtıdır; bu projede
+bu ölçütü titizlikle kullandık (bkz. Bölüm~\ref{sec:olcek}).
 
 \subsection{Çoklu Fraktal DFA (MF--DFA)}
 % ---------------------------------------------------------------------
 
 Klasik DFA, dalgalanmayı \emph{ortalama kare} (yani 2.\ mertebe) ile ölçer.
 MF--DFA (Kantelhardt vd., 2002), bu tek ölçüyü bir \emph{ailesine}
-genişletir: her pencereye bir $q$ üssü uygularız,
+genişletir: her pencereye bir $q$ üssü uygularız
+(Denklem~\eqref{eq:Fq}),
 \begin{equation}
   F_q(s) =
   \begin{cases}
@@ -453,7 +468,8 @@ $q$'nun anlamı şudur:
   \item $q = 0$: logaritmik ortalama (her ikisine de eşit ağırlık).
 \end{itemize}
 
-Sonra her $q$ için ayrı bir ölçekleme yasası ararız:
+Sonra her $q$ için ayrı bir ölçekleme yasası ararız
+(Denklem~\eqref{eq:hq}):
 \begin{equation}
   F_q(s) \sim s^{\,h(q)}.
   \label{eq:hq}
@@ -472,13 +488,15 @@ gelir:
 % ---------------------------------------------------------------------
 
 $h(q)$ eğrisini, doğrudan yorumlaması biraz soyut olan $f(\alpha)$
-spektrumuna çevirmek gelenekseldir. Önce ölçek üssü:
+spektrumuna çevirmek gelenekseldir. Önce ölçek üssü
+(Denklem~\eqref{eq:tau}):
 \begin{equation}
   \tau(q) = q\,h(q) - 1 .
   \label{eq:tau}
 \end{equation}
 $\tau(q)$, ``kütle üssü''dür. Ardından \textbf{Legendre dönüşümü} ile
-\emph{singularite üssü} $\alpha$ ve spektrum yüksekliği $f(\alpha)$ elde edilir:
+\emph{singularite üssü} $\alpha$ ve spektrum yüksekliği $f(\alpha)$ elde edilir
+(Denklem~\eqref{eq:legendre}):
 \begin{equation}
   \alpha = \frac{d\tau}{dq}, \qquad f(\alpha) = q\,\alpha - \tau(q).
   \label{eq:legendre}
@@ -502,9 +520,9 @@ Bunların anlamı:
         noktaya çöker ($\Dal \to 0$); çoklu fraktalda genişler.
 \end{itemize}
 
-Kısaca: \textbf{$\Dal$ büyükse, seri hem sakin hem patlamalı bölgeler
-barındırıyor ve bunlar farklı ölçekleme yasalarına tabi; yani zengin,
-doğrusal olmayan bir dinamik vardır.}
+Kısaca: \textbf{$\Dal$ (Denklem~\eqref{eq:width}) büyükse, seri hem sakin hem
+patlamalı bölgeler barındırıyor ve bunlar farklı ölçekleme yasalarına tabi;
+yani zengin, doğrusal olmayan bir dinamik vardır.}
 
 \subsection{$\Dal$ tek başına yeter mi? Neden surrogate testleri?}
 % ---------------------------------------------------------------------
@@ -684,14 +702,19 @@ arasında logaritmik olarak 30 adet. Bu parametrelerin seçimi rastgele değildi
 \end{itemize}
 
 \subsubsection{Bilinen süreçlerle doğrulama}
-Motorun doğruluğu iki bağımsız araçla sınandı:
+Motorun doğruluğu üç bağımsız araçla sınandı:
 \begin{itemize}[leftmargin=1.4em]
   \item \textbf{Kesirli Gauss gürültüsü (fGn):} Spektral sentezle üretilen ve
         Hurst üssü $H$ bilinen serilerde $h(q{=}2)$ ölçüldü: $H=0.3/0.5/0.7/0.9$
-        için sırasıyla $0.323/0.518/0.704/0.893$ bulundu --- teorik değerlerle
-        uyumlu.
+        için sırasıyla $0.317/0.493/0.705/0.894$ bulundu --- teorik değerlerle
+        uyumlu (en büyük sapma $0.006$). Aynı serilerin güç spektrumu eğimi,
+        ölçülen $-(2H-1)$ ile birebir örtüşür.
   \item \textbf{p-model (binom kaskad):} Teorik $\Dal \approx 1.19$ (p=0.3)
-        iken hesaplanan $1.20$; bağıl hata $\%1.2$. (p=0.2 için teorik $2.0$.)
+        iken hesaplanan $1.164$; bağıl hata \%2.0. (p=0.2 için teorik $1.996$,
+        hesaplanan $1.952$; hata \%2.2.)
+  \item \textbf{Multifraktal rastgele yürüyüş (MRW):} Stokastik çoklu fraktal
+        referansı olarak üretildi; $\sigma$ arttıkça $\Dal$ monoton artar
+        ($0.139/0.547/1.004$, sırasıyla $\sigma=0.3/0.5/0.8$).
 \end{itemize}
 
 \subsubsection{Kalibrasyon cetveli}
@@ -701,23 +724,56 @@ karşılaştırmaktır.
 
 \begin{table}[H]
 \centering
-\caption{Kalibrasyon cetveli ($q\in[-5,5]$, $s_{\min}=32$).}
+\caption{Kalibrasyon cetveli ($q\in[-5,5]$, $s_{\min}=32$, $N=8192$). Son
+satır gerçek veriden alınan etki büyüklüğüyle karşılaştırma için
+eklenmiştir.}
 \label{tab:calib}
-\begin{tabular}{llc}
+\begin{tabular}{llccc}
 \toprule
-Süreç & Karakter & $\Dal$ aralığı\\
+Süreç & Karakter & $\Dal$ & $h(q{=}2)$ & IAAFT $z$\\
 \midrule
-Beyaz gürültü & Tamamen rastgele & $0.02$--$0.08$\\
-Tekdüze dağılım & Tamamen rastgele & $\approx 0.02$\\
-Rastgele yürüyüş & Belleksiz birikim & $\approx 0.10$\\
-AR(1), $\phi=0.5$ & Kısa erimli doğrusal hafıza & $\approx 0.14$\\
-AR(1), $\phi=0.9$ & Güçlü doğrusal hafıza & $\approx 0.30$\\
-fBm (H=0.3--0.9) & Tekli fraktal & $0.21$--$0.43$\\
-p-model p=0.3 & Çoklu fraktal & $1.16$--$1.20$\\
-p-model p=0.2 & Güçlü çoklu fraktal & $\approx 2.0$\\
+Beyaz gürültü & Tamamen rastgele & 0.076 & 0.515 & $+1.9$\\
+Tekdüze dağılım & Tamamen rastgele & 0.016 & 0.491 & ---\\
+Rastgele yürüyüş & Belleksiz birikim & 0.095 & 1.439 & ---\\
+fGn $H{=}0.3$ & Tekli fraktal & 0.017 & 0.317 & ---\\
+fGn $H{=}0.5$ & Tekli fraktal & 0.077 & 0.493 & ---\\
+fGn $H{=}0.7$ & Tekli fraktal & 0.025 & 0.705 & ---\\
+fGn $H{=}0.9$ & Tekli fraktal & 0.044 & 0.894 & ---\\
+AR(1), $\phi{=}0.9$ & Kısa erimli doğrusal hafıza & 0.333 & 0.770 & ---\\
+p-model $p{=}0.4$ & Çoklu fraktal (det.) & 0.514 & 0.889 & ---\\
+p-model $p{=}0.3$ & Çoklu fraktal (det.) & 1.164 & 0.793 & $+1.0$\\
+p-model $p{=}0.2$ & Güçlü çoklu fraktal & 1.952 & 0.656 & ---\\
+MRW $\sigma{=}0.8$ & Çoklu fraktal (stok.) & 1.004 & 1.438 & $+3.2$\\
+\midrule
+\emph{Duygu (distress)} & \emph{gerçek veri} & \emph{0.67--0.78} & --- & \emph{$+10$--$+12$}\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Bu cetvel üç şeyi birden gösterir. Birincisi, \emph{hiçbir referans sürecin}
+ulaşamadığı bir etki büyüklüğü vardır: gerçek verideki $z\approx +10$--$+12$
+değerleri, referans süreçlerin en yüksek değeri olan MRW'nin $z=+3.2$'si ile
+bile karşılaştırılamaz. İkincisi, $\Dal$ değerleri birbiriyle karıştırılmaz
+şekilde ayrışır: rastgele süreçler $\approx 0.1$, tekli fraktallar $\approx 0.1$
+altında, gerçek çoklu fraktallar $1$'in üzerindedir; gözlenen $0.67$--$0.78$ değerleri
+bu ikisinin arasında, ``orta şiddette çoklu fraktallık'' bölgesindedir. Üçüncüsü
+ve en önemlisi, \emph{IAAFT'nin tek başına yeterli bir null olmadığının}
+kanıtlanmasıdır (bkz. aşağıdaki kutu).
+
+\begin{quote}
+\small
+\textbf{Kutu: IAAFT'nin sınırlaması.} p-model kaskadının genlik dağılımı
+\emph{ayrıktır} (yalnızca 58 farklı değer) ve IAAFT surrogu bu serinin $\Dal$'sını
+neredeyse tamamen taklit eder ($z=+1.0$, anlamsız). Buna karşılık \emph{shuffle}
+($z=+4.8$) ve \emph{faz-rastgele} ($z=+20.1$) null'ları çoklu fraktalliği açıkça
+yakalar. Bu, bir yöntem hatası değil, IAAFT'in gerçek bir yapısal sınırlamasıdır:
+ayrık (kutuplaşmış) genlik dağılımlı serilerde IAAFT null'u gözlemi taklit eder.
+Sonuç olarak \textbf{IAAFT tek başına asla yeterli bir null değildir; her zaman
+en az bir shuffle veya faz-rastgele null'u ile birlikte raporlanmalıdır.}
+Gerçek duygu serilerinin genlik dağılımı düzgün (sürekli) olduğundan, ana
+bulgular bu sınırlamadan etkilenmez; nitekim ana bulguda IAAFT $z$'si ile
+shuffle $z$'si birbirini doğrulamaktadır.
+\end{quote}
 
 \subsection{Surrogate (vekil veri) testleri}
 % ---------------------------------------------------------------------
@@ -833,27 +889,51 @@ gözlenen yapı ne trend, ne günlük döngü, ne de ölçüm gürültüsüdür.
 \subsection{Olay 1: Kahramanmaraş 2023}
 % ---------------------------------------------------------------------
 
-Tam seri ve fazlar için $\Dal$ ve IAAFT $z$-skorları Tablo~\ref{tab:km}'de
-verilmiştir.
+Tam seri ve fazlar için $\Dal$ ve surrogate test sonuçları
+Tablo~\ref{tab:km} ve Tablo~\ref{tab:kmfaz}'de verilmiştir.
 
 \begin{table}[H]
 \centering
-\caption{Kahramanmaraş 2023 duygusal sinyallerinde MF--DFA ve IAAFT testi.}
+\small
+\caption{Kahramanmaraş 2023, TÜM penceresi ($N=7192$). $z$ değerleri
+surrogate null dağılımına göre standartlaştırılmış sapmadır.}
 \label{tab:km}
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccccc}
 \toprule
-& \multicolumn{2}{c}{TÜM} & \multicolumn{2}{c}{AKUT (24s)}
-& \multicolumn{2}{c}{NORM (48s)}\\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-Sinyal & $\Dal$ & IAAFT $z$ & $\Dal$ & IAAFT $z$ & $\Dal$ & IAAFT $z$\\
+Sinyal & $\Dal$ & $\Delta h$ & IAAFT $z$ & IAAFT $p$ & Shuffle $z$ & Shuffle $p$ & $N$\\
 \midrule
-\textbf{distress} & 0.78 & $+11.6$ & 0.86 & $-0.8$ & 0.38 & $+7.2$\\
-üzüntü           & 0.41 & $+7.1$  & 0.81 & $+0.2$ & 0.42 & $+5.8$\\
-korku            & 0.57 & $+4.5$  & 0.68 & $+1.2$ & 0.29 & $+3.1$\\
-öfke             & 1.26 & $+22.6$ & 1.99 & $+4.3$ & 0.23 & $+3.7$\\
-sevinç           & 0.87 & $+20.7$ & 1.18 & $+4.3$ & 0.11 & $+1.4$\\
-val\_sav (kontrol)& --- & --- & --- & --- & --- & ---\\
-HACİM (kontrol)  & 1.00 & $+0.3$  & --- & --- & --- & ---\\
+\textbf{distress} (ANA) & 0.779 & 0.502 & $+11.6$ & 0.0099 & $+20.0$ & 0.0099 & 7192\\
+üzüntü (sadness)      & 0.414 & 0.195 & $+7.1$  & 0.0099 & $+10.8$ & 0.0099 & 7192\\
+korku (fear)           & 0.572 & 0.380 & $+4.5$  & 0.0099 & $+7.1$  & 0.0099 & 7192\\
+öfke (anger)           & 1.263 & 0.816 & $+22.6$ & 0.0099 & $+22.3$ & 0.0099 & 7192\\
+sevinç (joy)           & 0.873 & 0.543 & $+20.7$ & 0.0099 & $+19.6$ & 0.0099 & 7192\\
+valans (val\_sav)      & 0.516 & 0.298 & $+10.4$ & 0.0099 & $+10.1$ & 0.0099 & 7192\\
+valans\_emo            & 0.861 & 0.546 & $+18.8$ & 0.0099 & $+20.6$ & 0.0099 & 7192\\
+\midrule
+HACİM (kontrol)        & 0.997 & 0.700 & $+0.3$  & 0.0693 & $+33.0$ & 0.0099 & 7192\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Kahramanmaraş 2023, kriz ve normalleşme pencereleri. AKUT: olay
+sonrası ilk 24 saat ($N=1432$); NORM: son 48 saat ($N=2881$).}
+\label{tab:kmfaz}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{AKUT (24s)} & \multicolumn{2}{c}{NORM (48s)}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Sinyal & $\Dal$ & IAAFT $z$ & $\Dal$ & IAAFT $z$\\
+\midrule
+\textbf{distress} & 0.860 & $-0.8$ & 0.378 & $+7.2$\\
+üzüntü           & 0.811 & $+0.2$ & 0.422 & $+5.8$\\
+korku            & 0.676 & $+1.2$ & 0.289 & $+3.1$\\
+öfke             & 1.990 & $+4.3$ & 0.226 & $+3.7$\\
+sevinç           & 1.177 & $+4.3$ & 0.114 & $+1.4$\\
+val\_sav         & 0.590 & $+0.3$ & 0.266 & $+4.0$\\
+valans\_emo      & 0.798 & $+0.5$ & 0.171 & $+2.7$\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -869,11 +949,18 @@ Gözlemler:
   \item \textbf{Normalleşme fazında} çoklu fraktallik belirgin biçimde
         zayıflar (distress $0.78 \to 0.38$; sevinç $0.87 \to 0.11$). Yani
         kolektif duygu, kriz geçtikçe daha ``rastgele'' bir hâle yaklaşır.
-  \item \textbf{Kontrol:} Tweet hacminin $\Dal$'sı büyük görünse de
-        ($\approx 1.0$) IAAFT null'undan anlamlı sapmaz ($z=+0.3$). Bu,
-        hacmin karmaşıklığının \emph{doğrusal} süreçlerle açıklanabildiğini,
+  \item \textbf{AKUT penceresi dikkat gerektirir:} $N=1432$ ile ölçek aralığı
+        yalnızca yaklaşık bir dekad olduğundan $\Delta\alpha$ ve $z$ gürültülüdür;
+        burada IAAFT $z$'si $-0.8$ çıkmıştır. Bu pencere, bu nedenle
+        \emph{betimsel} olarak sunulur; asıl istatistiksel dayanak TÜM ve NORM
+        pencereleridir.
+  \item \textbf{Kontrol (HACİM):} Tweet hacminin $\Dal$'sı büyük görünse de
+        ($\approx 1.0$) IAAFT null'undan anlamlı sapmaz ($z=+0.3$, $p=0.069$).
+        Bu, hacmin karmaşıklığının \emph{doğrusal} süreçlerle açıklanabildiğini,
         oysa duygunun karmaşıklığının açıklanamadığını gösterir: duygu,
-        yalnızca ``aktivite'' değildir.
+        yalnızca ``aktivite'' değildir. (Bu kontrolün İzmir olayında daha
+        zayıf bir ayrım verdiği ve dolayısıyla \emph{betimsel} bir kontrol olarak
+        yorumlandığı bkz. Bölüm~\ref{sec:sinirlilik}.)
 \end{itemize}
 
 \subsection{İzmir 2020: İkinci bağımsız olay}
@@ -881,22 +968,118 @@ Gözlemler:
 
 İzmir verisi, aynı protokolle analiz edilmiştir. Duygu profili
 Kahramanmaraş'tan \emph{farklıdır}: İzmir'de baskın duygu \textbf{korkudur}
-($\%40$), üzüntü \%28'dir. Buna karşılık Kahramanmaraş'ta baskın duygu
-\textbf{üzüntüdür} ($\%37$). Bu, iki olayın toplumsal psikolojisinin farklı
+(\%40), üzüntü \%28'dir. Buna karşılık Kahramanmaraş'ta baskın duygu
+\textbf{üzüntüdür} (\%37). Bu, iki olayın toplumsal psikolojisinin farklı
 olduğunu gösterir (2020: enkaz altında kurtarma ve tsunami korkusu; 2023:
-çok geniş çaplı yas). İzmir'de seyrek olay-öncesi gece dışlandıktan sonra
-tüm seri için $\Dal \approx 0.67$ bulunmuştur; bu, Kahramanmaraş ile
-\emph{tutarlı} bir mertebedir ve sonuçların tek bir olaya özgü olmadığını
-destekler. (İzmir'in tüm sinyal ve pencere tablosu, analiz tamamlandığında
-bu bölüme eklenecektir.)
+çok geniş çaplı yas).
+
+İzmir verisinde olay-öncesi seyrek gece dışlandığında (bkz.
+Bölüm~\ref{sec:olcek}) tüm seri için $\Dal \approx 0.67$ bulunmuştur; bu,
+Kahramanmaraş ile \emph{tutarlı} bir mertebedir ve sonuçların tek bir olaya
+özgü olmadığını destekler. Tam sonuçlar Tablo~\ref{tab:iz} (TÜM penceresi) ve
+Tablo~\ref{tab:izfaz} (kriz ve normalleşme pencereleri) verilmiştir.
+
+\begin{table}[H]
+\centering
+\small
+\caption{İzmir 2020, TÜM penceresi ($N=10689$).}
+\label{tab:iz}
+\begin{tabular}{lccccccc}
+\toprule
+Sinyal & $\Dal$ & $\Delta h$ & IAAFT $z$ & IAAFT $p$ & Shuffle $z$ & Shuffle $p$ & $N$\\
+\midrule
+\textbf{distress} (ANA) & 0.669 & 0.388 & $+10.2$ & 0.0099 & $+21.6$ & 0.0099 & 10689\\
+üzüntü (sadness)      & 0.289 & 0.143 & $+4.9$  & 0.0099 & $+7.0$  & 0.0099 & 10689\\
+korku (fear)           & 0.515 & 0.289 & $+10.5$ & 0.0099 & $+16.2$ & 0.0099 & 10689\\
+öfke (anger)           & 0.666 & 0.391 & $+19.6$ & 0.0099 & $+13.2$ & 0.0099 & 10689\\
+sevinç (joy)           & 0.841 & 0.514 & $+10.4$ & 0.0099 & $+17.5$ & 0.0099 & 10689\\
+valans (val\_sav)      & 0.428 & 0.200 & $+12.6$ & 0.0099 & $+9.8$  & 0.0099 & 10689\\
+valans\_emo            & 0.797 & 0.469 & $+20.5$ & 0.0099 & $+20.7$ & 0.0099 & 10689\\
+\midrule
+HACİM (kontrol)        & 1.019 & 0.587 & $+9.7$  & 0.0099 & $+40.4$ & 0.0099 & 10689\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{İzmir 2020, kriz ve normalleşme pencereleri. AKUT: olay sonrası ilk
+24 saat ($N=1440$); NORM: son 48 saat ($N=2881$).}
+\label{tab:izfaz}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{AKUT (24s)} & \multicolumn{2}{c}{NORM (48s)}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Sinyal & $\Dal$ & IAAFT $z$ & $\Dal$ & IAAFT $z$\\
+\midrule
+\textbf{distress} & 0.745 & $+6.7$ & 0.246 & $+2.7$\\
+üzüntü           & 0.284 & $+1.7$ & 0.282 & $+3.7$\\
+korku            & 0.306 & $+0.4$ & 0.130 & $+1.2$\\
+öfke             & 0.642 & $+6.5$ & 0.324 & $+3.3$\\
+sevinç           & 0.919 & $+8.1$ & 0.159 & $+0.7$\\
+val\_sav         & 0.600 & $+8.4$ & 0.177 & $+1.8$\\
+valans\_emo      & 1.010 & $+10.7$ & 0.168 & $+0.5$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+İzmir'de de aynı nitel desen görülür: \emph{tüm} sinyaller TÜM penceresinde
+IAAFT ve shuffle null'larını anlamlı biçimde aşar; en güçlü sinyal yine
+öfke/valans\_emo'dur ($z\approx +20$); normalleşme fazında $\Dal$ düşer
+(distress $0.67 \to 0.25$) ve $z$'ler büyük ölçüde anlamsızlaşır. Kriz
+penceresinde ise İzmir'de $z$'ler Kahramanmaraş'a göre \emph{daha yüksek}
+($+6.7$ vs. $-0.8$); bunun nedeni iki olayın farklı duygusal profilleri
+(İzmir'de korku ve sevinç baskın, Kahramanmaraş'ta üzüntü ve öfke) ve
+dolayısıyla farklı interim (aralıksız) yapılarıdır.
+
+Yalnızca bir fark önemlidir: İzmir'de \textbf{hacim kontrolü de} IAAFT null'unu
+aşmaktadır ($z=+9.7$). Bu, ``hacim doğrusaldır'' argümanının İzmir'de
+geçerli olmadığını gösterir; bu yüzden hacim kontrolü raporun tamamında
+\emph{betimsel} bir karşılaştırma olarak sunulmuş, ana argüman ise doğrudan
+IAAFT ve shuffle null'larının \emph{çift} karşılaştırmasına dayandırılmıştır
+(bkz. Bölüm~\ref{sec:sinirlilik}).
 
 \subsection{Olaylar arası karşılaştırma ve doğrusal/doğrusal-olmayan ayrımı}
 % ---------------------------------------------------------------------
 
-Her iki olayda da ortak desen şudur: duygu sinyalleri (özellikle distress,
-öfke) anlamlı $\Dal$ verirken, salt hacim sinyali IAAFT ile açıklanabilir.
-Tablo~\ref{tab:surr} ile birlikte bu, şu sonuca götürür: \emph{kolektif
-duygunun karmaşıklığı, bir doğrusal gürültü sürecine indirgenemez.}
+Her iki olayda da ortak desen şudur: duygu sinyalleri TÜM penceresinde hem
+IAAFT hem shuffle null'larını anlamlı biçimde aşar, ve normalleşme fazında bu
+sapma kapanır. Karşılaştırmanın özeti Tablo~\ref{tab:kars}'te verilmiştir.
+
+\begin{table}[H]
+\centering
+\small
+\caption{İki olayın karşılaştırması (ana sinyal \texttt{distress}).}
+\label{tab:kars}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{Kahramanmaraş 2023} & \multicolumn{2}{c}{İzmir 2020}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Pencere & $\Dal$ & IAAFT $z$ & $\Dal$ & IAAFT $z$\\
+\midrule
+TÜM  & 0.779 & $+11.6$ & 0.669 & $+10.2$\\
+AKUT & 0.860 & $-0.8$  & 0.745 & $+6.7$\\
+NORM & 0.378 & $+7.2$  & 0.246 & $+2.7$\\
+HACİM& 0.997 & $+0.3$  & 1.019 & $+9.7$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Tablo~\ref{tab:kars} ve Tablo~\ref{tab:surr} birlikte şu sonuca götürür:
+\emph{kolektif duygunun karmaşıklığı, bir doğrusal gürültü sürecine
+indirgenemez.} İki olayın $z$'leri birbirine çok yakındır ($+11.6$ ve $+10.2$);
+bu, farklı yıl, farklı ölçek, farklı duygusal profil ve farklı tweet sayısına
+sahip iki bağımsız olayda aynı nicel yapının ortaya çıktığını gösterir.
+
+Hacim kontrolü hakkında bir ayrıntı gerekir. Kahramanmaraş'ta hacim
+$\log(1+\text{tweet/dk})$ serisi IAAFT ile açıklanırken ($z=+0.3$), İzmir'de
+aynı kontrol anlamlı biçimde sapar ($z=+9.7$). İncelendiğinde bunun nedeni
+Kahramanmaraş serisindeki 60 adet sıfır-dakikanın IAAFT null'unu
+kararsızlaştırması olduğu görülmüştür ($z$ aynı veriyle $40$ surrogal
+arasında $+0.3$ ile $+1.3$ arasında değişmektedir). Bu nedenle raporun ana
+argümanı ``duygu doğrusaldır, hacim değil'' biçiminde kurulmamış; bunun yerine
+duygunun kendi null modellerine karşı test edilmesine dayandırılmıştır.
 
 \subsection{Robustluk bulguları}
 % ---------------------------------------------------------------------
@@ -921,8 +1104,9 @@ duygunun karmaşıklığı, bir doğrusal gürültü sürecine indirgenemez.}
 Elde edilen sonuçlar, araştırma sorularının çoğunu olumlu yanıtlar. Kolektif
 duygu zaman serisi (i) saf rastgele \emph{değildir}, (ii) sadece doğrusal
 korelasyonla da açıklanamaz, (iii) kriz ve normalleşme fazlarında farklı
-davranır, (iv) salt aktivite yoğunluğundan ayrılabilir. Bu dört madde
-birlikte, H1--H4 hipotezlerini destekler.
+davranır, (iv) bu nitel desen iki bağımsız olayda ve iki farklı duygu
+modeliyle tekrarlanır. Bu dört madde birlikte, H1--H4 hipotezlerini
+destekler.
 
 Bunun düşünsel anlamı şudur: sosyal medya duygusu, ``milyonlarca bağımsız
 kişinin bağımsız kararları'' olarak indirgenebilecek bir gürültü değildir;
@@ -943,12 +1127,22 @@ dışı bir toplumsal hareketlenmenin işareti olabilir.
 \subsection{Duygu, aktivite yoğunluğundan farklıdır}
 % ---------------------------------------------------------------------
 
-Belki de en \emph{pratik} bulgu budur: Hacim serisinin görünür karmaşıklığı
-büyük ölçüde doğrusal (otokorelasyonlu gürültü) iken, \emph{aynı dakikalarda}
-ölçülen duygu serisinin karmaşıklığı açıklanamaz. Yani içerik (duygu) ile
-miktar (tweet sayısı) farklı ölçekleme yasalarına tabidir. Bu ayrım, ``sadece
-tweet sayısına bakarak duygu analizi yapmak'' yaklaşımının yetersiz olacağını
-göstermesi bakımından değerlidir.
+Belki de en \emph{pratik} bulgu budur: İçerik (duygu) ile miktar (tweet
+sayısı) ölçeklenebilir birbirinden farklı yapılar taşımaktadır. Tweet hacmi
+serisi de çoklu fraktaldir ($\Delta\alpha\approx 1.0$, yani duygu
+serilerininkinden \emph{daha} geniş bir spektrum), fakat bu karmaşıklığın
+doğrusal (otokorelasyonlu) bir gürültü sürecine indirgenip indirgenemediği
+olaylar arasında değişmektedir. Dolayısıyla ``hacim de çoklu fraktaldır''
+gözlemi tek başına ``duygu da öyle'' gözlemini doğrulamaz.
+
+Bununla birlikte, duygu serilerinin iki bağımsız olayda da hem IAAFT hem de
+shuffle null'larını $z\approx +10$--$+22$ ile aşması, yani \emph{kendi}
+null modelleri karşısında açık biçimde sapması, asıl istatistiksel ayrımı
+verir. Bu ayrım, ``sadece tweet sayısına bakarak duygu analizi yapmak''
+yaklaşımının yetersiz olacağını gösteresi bakımından değerlidir. Yine de
+bu tür bir karşılaştırmanın, hacim kontrolünün iki olayda tutarsız davrandığı
+göz önüne alınarak \emph{eşit ölçekte bir kanıt} olarak değil, \emph{yardımcı
+bir gözlem} olarak sunulması gerektiğini vurgulamak isteriz.
 
 \subsection{Metodolojik dersler}
 % ---------------------------------------------------------------------
@@ -963,9 +1157,22 @@ göstermesi bakımından değerlidir.
   \item \textbf{Seyrek veri bölgeleri dışlanmalıdır.} Uzun interpolasyonlar
         yapay çoklu fraktallik üretir; bu, $\Dal$'yı $5$ katına kadar
         şişirebilir.
+  \item \textbf{Null modelleri çoğaltmak gerekir.} IAAFT, ayrık genlik
+        dağılımlı serilerde çoklu fraktalliği yok edemeyebilir (bu çalışmada
+        p-model üzerinde belgelendi: IAAFT $z=+1.0$, shuffle $z=+4.8$,
+        faz-rastgele $z=+20.1$). Bu nedenle tek bir null modeline güvenmek
+        yerine en az iki bağımsız null (burada IAAFT ve shuffle) birlikte
+        raporlanmalıdır. Bu ilke, projenin genel olarak kullanılabilecek
+        metodolojik katkılarından biridir.
+  \item \textbf{Bir kontrolün ``anlamlı sapmaması'' tek başına yeterlidir.}
+        Buradaki hacim kontrolü, iki olay arasında farklı davranmış ve
+        ``duygu doğrusaldır'' biçimindeki basit bir argüman bu yüzden
+        kurulmamıştır. Kontroller, eşit ölçekte bir kanıt olarak değil,
+        yardımcı gözlem olarak sunulmalıdır.
 \end{enumerate}
 
 \subsection{Sınırlılıklar}
+\label{sec:sinirlilik}
 % ---------------------------------------------------------------------
 
 \begin{itemize}[leftmargin=1.4em]
@@ -977,6 +1184,24 @@ göstermesi bakımından değerlidir.
         tutarlıdır, ancak daha geniş bir olay setiyle pekiştirilmelidir.
   \item \textbf{Nonstationarity:} Kriz$\to$normalleşme geçişi büyük ölçekleri
         etkiler; bu, detrend analizleriyle kontrol edilmiştir.
+  \item \textbf{IAAFT'nin ayrık genlik dağılımındaki sınırlaması:} IAAFT
+        null'u, kutuplaşmış (ayrık) genlik dağılımlı serilerde gözlenen
+        çoklu fraktalliği taklit edebilmektedir (p-model üzerinde belgelendi).
+        Bu çalışmada tüm sonuçlar bu nedenle \emph{çift} null testiyle
+        (IAAFT + shuffle) verilmiştir; tek başına IAAFT'a dayanılmamıştır.
+  \item \textbf{Hacim kontrolünün tutarsızlığı:} HACİM serisi iki olayda
+        farklı davranmış (Kahramanmaraş $z=+0.3$, İzmir $z=+9.7$); bu
+        kontrol yalnızca betimsel olarak yorumlanabilmiştir.
+  \item \textbf{AKUT penceresinin kısalığı:} $N\approx 1440$ ile ölçek
+        aralığı yaklaşık bir dekadla sınırlı olduğundan, bu penceredeki
+        $\Delta\alpha$ ve $z$ değerleri gürültülüdür; AKUT penceresi
+        betimsel bulgu olarak sunulmuştur.
+  \item \textbf{Duygu ölçümünün hacimle ortak değişkenliği:} Aynı tweet'lerden
+        türetildiği için duygu serisinin dakika-içi varyansı, tweet yoğunluğu
+        ile ortak değişkenliğe sahiptir. IAAFT ve shuffle null'ları bu ortak
+        değişkenliğin büyük kısmını elese de, tam olarak ortadan kaldırdığı
+        söylenemez. Daha kesin bir kontrol, hacim-konumlandırılmış bir null
+        modeldir (gelecek çalışma).
 \end{itemize}
 
 \subsection{Genellenebilirlik}
@@ -995,8 +1220,16 @@ Bu proje, basit ama derin bir soruyla başladı: ``Bir deprem sırasında
 milyonlarca insanın birlikte ürettiği duygu, rastgele midir?'' Yanıt, hayır
 çıktı. Kolektif duygu zaman serisi, hem zaman sırasına hem de doğrusal
 olmayan mekanizmalara bağlı, ölçekten bağımsız, çoklu fraktal bir yapı taşır;
-bu yapı kriz anında güçlenir, normalleşmeyle zayıflar ve salt ``tweet
-sayısından'' ayrıştırılabilir.
+bu yapı kriz anında güçlenir, normalleşmeyle zayıflar ve iki bağımsız olayda
+tekrarlanır.
+
+Bu çalışmanın yöntem açısından da bir katkısı vardır: (i) felaket bağlamında
+duygu ölçümünde naif model seçiminin yarattığı ölçüm hatasının somut olarak
+gösterilmesi, (ii) ayrık genlik dağılımlı serilerde IAAFT null'unun yetersiz
+kaldığının deneysel olarak belgelenmesi ve buna karşılık çift null
+(IAAFT + shuffle) kullanımının önerilmesi, (iii) seyrek veri bölgelerinin
+yapay çoklu fraktallik üretmesi nedeniyle analiz penceresi kuralının
+sabitlenmesi.
 
 \textbf{Gelecek çalışmalar:}
 \begin{enumerate}[leftmargin=1.6em]
@@ -1073,12 +1306,18 @@ Böylece
 \begin{equation}
   \Dal = \alpha_{\max} - \alpha_{\min} = \log_2\frac{1-p}{p}.
 \end{equation}
-$p=0.3$ için $\Dal \approx 1.19$; bu, hesaplanan $1.20$ ile uyuşur.
+$p=0.3$ için $\Dal \approx 1.19$; bu, hesaplanan $1.164$ ile uyuşur
+(bağıl hata \%2.0).
 
 \section{Yazılım mimarisi}
 \label{app:yazilim}
 \begin{itemize}[leftmargin=1.4em]
-  \item \texttt{mfdfa\_core.py} --- MF--DFA motoru ve surrogate üreticileri.
+  \item \texttt{run\_all.py} --- \emph{tek giriş noktası}: veri denetimi,
+        skorlama, seri üretimi, MF--DFA analizi, kalibrasyon, karşılaştırma ve
+        testleri sırayla çalıştıran uçtan uca boru hattı.
+  \item \texttt{mfdfa\_core.py} --- MF--DFA motoru, surrogate üreticileri
+        (IAAFT, shuffle, faz-rastgele) ve referans süreç üreticileri
+        (fGn, AR(1), beyaz gürültü, MRW, p-model).
   \item \texttt{calibration.py}, \texttt{verify\_fix.py} --- doğrulama ve
         kalibrasyon cetveli.
   \item \texttt{score2.py} --- duygu puanlaması (iki olay, iki model).
@@ -1086,6 +1325,10 @@ $p=0.3$ için $\Dal \approx 1.19$; bu, hesaplanan $1.20$ ile uyuşur.
   \item \texttt{analyze2.py}, \texttt{run\_analysis.py} --- MF--DFA + surrogate
         analiz sürücüsü.
   \item \texttt{compare\_events2.py} --- olaylar arası karşılaştırma.
+  \item \texttt{tests/test\_mfdfa.py} --- 28 adet birim testi: Hurst kurtarımı,
+        p-model teorik karşılaştırması, $q=0$ dalı, surrogate testleri,
+        IAAFT sınırlamasının belgelenmesi ve kayıtlı sonuçların bütünlüğü.
+  \item \texttt{requirements.txt} --- sabitlenmiş bağımlılık sürümleri.
   \item Robustluk: \texttt{robust\_check.py}, \texttt{scale\_test.py},
         \texttt{r2\_check.py}, \texttt{diurnal\_check.py}, \texttt{qsensitivity.py}.
 \end{itemize}

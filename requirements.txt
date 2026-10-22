@@ -1,0 +1,19 @@
+# ============================================================
+# TUBITAK 2204-A  -  Matematik  -  MF-DFA / Coklu Fraktal Analizi
+# Test edilen ortam: Windows 11, Python 3.12.10, CUDA 12.4
+# ============================================================
+
+# --- Bilimsel hesaplama (MF-DFA cekirdegi bunlara dayanir) ---
+numpy==2.5.4
+scipy==1.18.1
+pandas==3.0.6
+matplotlib==3.11.2
+
+# --- Duygu skorlama (HuggingFace transformers) ---
+# torch: CUDA'li surum icin:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+torch==2.6.0
+transformers==5.20.1
+
+# --- Testler ---
+pytest==9.1.1

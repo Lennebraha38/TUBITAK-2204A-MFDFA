@@ -1,0 +1,64 @@
+==========================================================================================
+MF-DFA OZET: Delta_alpha ve IAAFT z-skoru (event x sinyal x pencere)
+==========================================================================================
+
+### OLAY: izmir2020
+Delta_alpha:
+window         AKUT   HACIM    NORM     TUM
+signal                                     
+anger        0.6425  1.0185  0.3245  0.6661
+distress     0.7452  1.0185  0.2456  0.6688
+fear         0.3055  1.0185  0.1304  0.5151
+joy          0.9193  1.0185  0.1592  0.8414
+sadness      0.2835  1.0185  0.2815  0.2885
+val_sav      0.5996  1.0185  0.1773  0.4284
+valence_emo  1.0104  1.0185  0.1684  0.7971
+
+IAAFT z (buyuk = IAAFT null'dan anlamli sapiyor = dogrusal-olmayan coklu fraktal):
+window        AKUT  HACIM  NORM    TUM
+signal                                
+anger         6.49   9.67  3.34  19.56
+distress      6.75   9.67  2.72  10.18
+fear          0.40   9.67  1.22  10.54
+joy           8.12   9.67  0.72  10.40
+sadness       1.68   9.67  3.71   4.92
+val_sav       8.44   9.67  1.81  12.61
+valence_emo  10.69   9.67  0.53  20.53
+
+### OLAY: km2023
+Delta_alpha:
+window         AKUT   HACIM    NORM     TUM
+signal                                     
+anger        0.2895  0.9905  0.2262  1.0984
+distress     0.4819  0.9905  0.3779  0.7692
+fear         0.6366  0.9905  0.2892  0.5548
+joy          0.2763  0.9905  0.1137  0.8304
+sadness      0.3923  0.9905  0.4219  0.4170
+val_sav      0.2583  0.9905  0.2655  0.4985
+valence_emo  0.2171  0.9905  0.1706  0.8290
+
+IAAFT z (buyuk = IAAFT null'dan anlamli sapiyor = dogrusal-olmayan coklu fraktal):
+window       AKUT  HACIM  NORM    TUM
+signal                               
+anger        1.09   0.52  3.65  19.60
+distress     1.87   0.52  7.22  18.94
+fear         0.85   0.52  3.12   4.21
+joy          0.84   0.52  1.39  22.72
+sadness     -0.96   0.52  5.81   7.80
+val_sav      1.61   0.52  4.01  10.84
+valence_emo  0.62   0.52  2.66  17.11
+
+==========================================================================================
+ANA SINYAL (distress = uzuntu+korku) - pencere karsilastirmasi
+==========================================================================================
+    event window     N  delta_alpha  delta_h  iaaft_z  iaaft_p  shuffle_z  shuffle_p
+izmir2020    TUM 10689       0.6688   0.3877   10.185 0.009901     21.553   0.009901
+izmir2020   AKUT  1440       0.7452   0.4490    6.747 0.009901      8.227   0.009901
+izmir2020   NORM  2881       0.2456   0.0751    2.723 0.049505      3.252   0.009901
+izmir2020  HACIM 10689       1.0185   0.5873    9.674 0.009901     40.371   0.009901
+   km2023    TUM  7183       0.7692   0.4859   18.941 0.009901     20.872   0.009901
+   km2023   AKUT  1440       0.4819  -0.3593    1.873 0.059406      8.191   0.009901
+   km2023   NORM  2881       0.3779   0.2208    7.219 0.009901      4.180   0.009901
+   km2023  HACIM  7183       0.9905   0.7050    0.516 0.099010     27.377   0.009901
+
+Figur: C:\TUBITAK_Proje\results\comparison_plot.png

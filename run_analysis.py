@@ -12,9 +12,11 @@ ROOT = r"C:\TUBITAK_Proje"
 n_surr = sys.argv[1] if len(sys.argv) > 1 else "100"
 
 EVENTS = [
+    # Kahramanmaras depremi: 2023-02-06 04:17 TRT = 01:17 UTC
     dict(prefix="km2023",
          glob="results\\scored2\\deprem*_score2.csv.gz",
-         datecol="Date", acute="2023-02-06T00:00"),
+         datecol="Date", acute="2023-02-06T01:17"),
+    # Izmir depremi: 2020-10-30 14:51 TRT = 11:51 UTC
     dict(prefix="izmir2020",
          glob="results\\scored2\\izmir_earthquake_score2.csv.gz",
          datecol="Datetime", acute="2020-10-30T11:51"),
